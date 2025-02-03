@@ -7,5 +7,6 @@ By Max Bagatini Alves, Gabriela L. P. Barbosa, Caleb Freckmann, Matthew Pryce, L
 2. Install the necessary packages: `npm install`
 3. If utilizing Development Build in iOS, open the Xcode Workspace file, open the Signing & Capabilities tab, and change the team to your Apple account.
 4. To run (on iOS) `npx expo run:ios --device` and select your device.
+
 **_Note:_** If the app installs but does not download/bundle (or crashes before opening), attempt to connect your device to your phone through a hotspot and try again (This issue happens in the UCF wifi, for example).
    
