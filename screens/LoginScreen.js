@@ -76,7 +76,7 @@ const LoginScreen = ({ navigation }) => {
 					Forgot Password?
 				</Text>
 				{loading ? (
-					<ActivityIndicator size="large" color="#0000ff" />
+					<ActivityIndicator size="large" color="#cccccc" />
 				) : (
 					<>
 						<Button title="Login" onPress={signIn} />

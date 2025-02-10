@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, TextInput, Button, Text, StyleSheet, Alert, Keyboard, TouchableWithoutFeedback, ActivityIndicator } from 'react-native';
 import { FIREBASE_AUTH } from '../firebaseConfig';
-import { createUserWithEmailAndPassword, sendEmailVerification } from "firebase/auth";
+import { createUserWithEmailAndPassword, sendEmailVerification, updateProfile } from "firebase/auth";
 
 const SignupScreen = ({ navigation }) => {
 	const [firstName, setFirstName] = useState('');
@@ -18,10 +18,8 @@ const SignupScreen = ({ navigation }) => {
 			// Sign Up
 			const userResponse = await createUserWithEmailAndPassword(auth, email, password);
 			const user = userResponse.user;
+			await updateProfile(user, {displayName: firstName + " " + lastName});
 			console.log('User created:', user);
-
-			// TODO: Implement saving user's first and last name
-			// TODO: ...
 
 			await sendEmailVerification(user);
 			Alert.alert('Email Verification', 'Please verify your email before logging in. Check your inbox for the verification email.');
@@ -80,7 +78,7 @@ const SignupScreen = ({ navigation }) => {
 					secureTextEntry
 				/>
 				{loading ? (
-					<ActivityIndicator size="large" color="#0000ff" />
+					<ActivityIndicator size="large" color="#cccccc" />
 				) : (
 					<>
 						<Button title="Sign Up" onPress={signUp} />
