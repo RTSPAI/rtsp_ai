@@ -1,28 +1,25 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Button, Alert } from 'react-native';
 import { FIREBASE_AUTH } from '../firebaseConfig';
-import { onAuthStateChanged, signOut } from "firebase/auth";
+import { signOut } from "firebase/auth";
+import { useAuthContext } from '../context/AuthContext';
 
 const HomeScreen = ({ navigation }) => {
-    const [user, setUser] = useState(null);
+    const { user, loadingUser } = useAuthContext();
     const [loading, setLoading] = useState(false);
     const auth = FIREBASE_AUTH;
 
-    // Function to access the current user
+    // After rending, verify is user is signed in
     useEffect(() => {
-        const unsubscribe = onAuthStateChanged(auth, (user) => {
-            setUser(user);
-            if (user) {
-                // User is signed in
-                console.log('User logged in:', user);
-            } else {
-                // User is signed out
-                navigation.replace('Login');
-            }
-        });
-        // Cleanup the component to unsubscribe when component unmounts
-        return () => unsubscribe();
-    }, []);
+        if (!loadingUser && !user) {
+            navigation.replace('Login');
+        }
+    }, [user, loadingUser, navigation]);
+
+    // If loading or user not present, render nothing
+    if (loadingUser || !user) {
+        return null;
+    }
 
     // Function to log out of current user
     const logOut = async () => {
@@ -42,7 +39,7 @@ const HomeScreen = ({ navigation }) => {
 
     return (
         <View style={styles.container}>
-            <Text style={styles.congratsText}>Congrats, you logged in!</Text>
+            <Text style={styles.congratsText}>Welcome, {user.displayName}!</Text>
             <Button title="Log Out" onPress={logOut} />
         </View>
     );
