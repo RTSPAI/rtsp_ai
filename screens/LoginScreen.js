@@ -15,14 +15,12 @@ const LoginScreen = ({ navigation }) => {
 			// Sign In
 			const userResponse = await signInWithEmailAndPassword(auth, email, password);
 			const user = userResponse.user;
-			console.log('User logged in:', user);
-
+			// Check email validation
 			if (!user.emailVerified) {
 				await signOut(auth);
 				Alert.alert('Email Not Verified', 'Please verify your email before logging in. Check your inbox for the verification email.');
 				return;
 			}
-
 			// Navigate to Home page
 			navigation.replace('Home');
 		} catch (error) {
@@ -63,6 +61,7 @@ const LoginScreen = ({ navigation }) => {
 					value={email}
 					onChangeText={setEmail}
 					keyboardType="email-address"
+					textContentType="oneTimeCode"
 					autoCapitalize="none"
 				/>
 				<TextInput
@@ -71,6 +70,7 @@ const LoginScreen = ({ navigation }) => {
 					value={password}
 					onChangeText={setPassword}
 					secureTextEntry={true}
+					textContentType="oneTimeCode"
 				/>
 				<Text style={styles.forgotPassword} onPress={resetPassword}>
 					Forgot Password?

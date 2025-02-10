@@ -1,40 +1,64 @@
-import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
-import { getAuth, onAuthStateChanged } from "firebase/auth";
+import React, { useEffect, useState } from 'react';
+import { View, Text, StyleSheet, Button, Alert } from 'react-native';
+import { FIREBASE_AUTH } from '../firebaseConfig';
+import { onAuthStateChanged, signOut } from "firebase/auth";
 
-const auth = getAuth();
-onAuthStateChanged(auth, (user) => {
-  if (user) {
-    // User is signed in, see docs for a list of available properties
-    // https://firebase.google.com/docs/reference/js/auth.user
-    const uid = user.uid;
-    console.log(`USER ID: ${uid}`)
-    // ...
-  } else {
-    // User is signed out
-    // ...
-  }
-});
+const HomeScreen = ({ navigation }) => {
+    const [user, setUser] = useState(null);
+    const [loading, setLoading] = useState(false);
+    const auth = FIREBASE_AUTH;
 
-const HomeScreen = () => {
-  return (
-    <View style={styles.container}>
-      <Text style={styles.congratsText}>Congrats, you logged in!</Text>
-    </View>
-  );
+    // Function to access the current user
+    useEffect(() => {
+        const unsubscribe = onAuthStateChanged(auth, (user) => {
+            setUser(user);
+            if (user) {
+                // User is signed in
+                console.log('User logged in:', user);
+            } else {
+                // User is signed out
+                navigation.replace('Login');
+            }
+        });
+        // Cleanup the component to unsubscribe when component unmounts
+        return () => unsubscribe();
+    }, []);
+
+    // Function to log out of current user
+    const logOut = async () => {
+        setLoading(true);
+        try {
+            await signOut(auth);
+        } catch (error) {
+            const errorCode = error.code;
+            const errorMessage = error.message;
+            console.log(`${errorCode} | ${errorMessage}`);
+            // Optionally, show an alert with the error
+            Alert.alert('Log Out Error', errorMessage);
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    return (
+        <View style={styles.container}>
+            <Text style={styles.congratsText}>Congrats, you logged in!</Text>
+            <Button title="Log Out" onPress={logOut} />
+        </View>
+    );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  congratsText: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: 'green',
-  },
+    container: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    congratsText: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        color: 'green',
+    },
 });
 
 export default HomeScreen;

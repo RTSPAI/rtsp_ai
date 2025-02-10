@@ -19,11 +19,9 @@ const SignupScreen = ({ navigation }) => {
 			const userResponse = await createUserWithEmailAndPassword(auth, email, password);
 			const user = userResponse.user;
 			await updateProfile(user, {displayName: firstName + " " + lastName});
-			console.log('User created:', user);
-
+			// Send email validation email
 			await sendEmailVerification(user);
 			Alert.alert('Email Verification', 'Please verify your email before logging in. Check your inbox for the verification email.');
-			
 			// Navigate to Home page
 			navigation.replace('Login');
 		} catch (error) {
@@ -69,6 +67,7 @@ const SignupScreen = ({ navigation }) => {
 					value={password}
 					onChangeText={setPassword}
 					secureTextEntry
+					textContentType="none"
 				/>
 				<TextInput
 					style={styles.input}
@@ -76,6 +75,7 @@ const SignupScreen = ({ navigation }) => {
 					value={confirmPassword}
 					onChangeText={setConfirmPassword}
 					secureTextEntry
+					textContentType="none"
 				/>
 				{loading ? (
 					<ActivityIndicator size="large" color="#cccccc" />
