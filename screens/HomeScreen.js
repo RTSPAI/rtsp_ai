@@ -3,6 +3,7 @@ import { View, Text, StyleSheet } from 'react-native';
 import { FIREBASE_AUTH } from '../firebaseConfig';
 import { useAuthContext, resetScreens } from '../context/AuthContext';
 import Ionicons from '@expo/vector-icons/Ionicons';
+import ExerciseList from '../components/ExerciseList';
 
 const HomeScreen = ({ navigation }) => {
     const { user, loadingUser } = useAuthContext();
@@ -27,6 +28,7 @@ const HomeScreen = ({ navigation }) => {
             {/* NOTE: THE EXERCISE ANALYSIS BUTTON IS TEMPORARY FOR NOW */}
             <Ionicons.Button name="camera" size={32} onPress={() => navigation.navigate("Camera")}>Exercise Analysis</Ionicons.Button>
             <Text style={styles.text}>Insert list of available exercises here...</Text>
+            <ExerciseList navigation={navigation}/>
         </View>
     );
 };
@@ -38,7 +40,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     text: {
-
+        fontSize: 16,
     },
     space: {
         width: 20,
