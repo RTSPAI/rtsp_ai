@@ -16,11 +16,6 @@ const ProfileScreen = ({ navigation }) => {
         resetScreens(user, loadingUser, navigation);
     }, [user, loadingUser, navigation]);
 
-    // If loading or user not present, render nothing
-    if (loadingUser || !user) {
-        return null;
-    }
-
     useEffect(() => {
         // Function to read user's session history
         const fetchSessions = async () => {
@@ -54,6 +49,11 @@ const ProfileScreen = ({ navigation }) => {
 
         fetchSessions();
     }, []);
+
+    // If loading or user not present, render nothing
+    if (loadingUser || !user) {
+        return null;
+    }
 
     const onPress = (session) => {
         navigation.navigate("Feedback", { "session" : session });
