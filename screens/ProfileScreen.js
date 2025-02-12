@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, FlatList } from 'react-native';
+import { View, Text, StyleSheet, FlatList, Pressable } from 'react-native';
 import { FIREBASE_AUTH, FIREBASE_DB } from '../firebaseConfig';
-import { ref, get, query, limitToFirst, orderByChild, limitToLast
- } from 'firebase/database';
+import {
+    ref, get, query, limitToFirst, orderByChild, limitToLast
+} from 'firebase/database';
 import { useAuthContext, resetScreens } from '../context/AuthContext';
 import Ionicons from '@expo/vector-icons/Ionicons';
 
@@ -38,6 +39,8 @@ const ProfileScreen = ({ navigation }) => {
                     });
                     // Sort the data
                     orderedSessions.sort((a, b) => b.createdAt - a.createdAt);
+                    // TODO: Here or later, only query for necessary data 
+                    // TODO: and process the createdAt field as epoch
                 } else {
                     console.log("No history data found.")
                 }
@@ -54,14 +57,20 @@ const ProfileScreen = ({ navigation }) => {
         fetchSessions();
     }, []);
 
-    const renderItem = ({ item }) => (
-        <View style={styles.item}>
-            <Text style={styles.title}>{item.exercise}</Text>
-            <Text>Repetitions: {item.repetitions}</Text>
-            <Text>Duration: {item.duration} sec</Text>
-            <Text>Created At: {item.createdAt}</Text>
-        </View>
+    const onPress = (session) => {
+        navigation.navigate("Feedback", { "session" : session });
+    }
+
+    const Item = ({ session }) => (
+        <Pressable style={styles.item} onPress={() => onPress(session)}>
+            <Text style={styles.title}>{session.exercise}</Text>
+            <Text>Repetitions: {session.repetitions}</Text>
+            <Text>Duration: {session.duration} sec</Text>
+            <Text>Created At: {session.createdAt}</Text>
+        </Pressable>
     );
+
+    const renderItem = ({ item }) => <Item session={item} />;
 
     return (
         <View style={styles.container}>

@@ -3,7 +3,9 @@ import { View, Text, StyleSheet } from 'react-native';
 import { FIREBASE_AUTH } from '../firebaseConfig';
 import { useAuthContext, resetScreens } from '../context/AuthContext';
 
-const FeedbackScreen = ({ navigation }) => {
+const FeedbackScreen = ({ route, navigation }) => {
+    // TODO: Unpack the session object and display feedback data
+    const { session } = route.params;
     const { user, loadingUser } = useAuthContext();
     const [loading, setLoading] = useState(false);
     const auth = FIREBASE_AUTH;
@@ -18,9 +20,12 @@ const FeedbackScreen = ({ navigation }) => {
         return null;
     }
 
+    // TODO: Display FlatList with session's feedback
+    // TODO ...
     return (
         <View style={styles.container}>
             <Text style={styles.text}>Insert loading of (a single/specific) exercise feedback here</Text>
+            <Text>{session ? JSON.stringify(session) : "n/a"}</Text>
         </View>
     );
 };
