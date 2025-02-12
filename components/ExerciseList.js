@@ -27,11 +27,10 @@ const Item = ({ title, onPress }) => (
 
 const ExerciseList = ({ navigation }) => {
     const navigateTo = (navigation, exercise) => {
-        console.log(exercise);
         if (exercise === "Auto Detect") {
             navigation.navigate("Warmup");
         } else {
-            navigation.navigate("Camera");
+            navigation.navigate("Camera", { "exercise" : exercise });
         }
     }
     

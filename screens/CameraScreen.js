@@ -3,7 +3,8 @@ import { View, Text, StyleSheet } from 'react-native';
 import { FIREBASE_AUTH } from '../firebaseConfig';
 import { useAuthContext, resetScreens } from '../context/AuthContext';
 
-const CameraScreen = ({ navigation }) => {
+const CameraScreen = ({ route, navigation }) => {
+    const { exercise } = route.params;
     const { user, loadingUser } = useAuthContext();
     const [loading, setLoading] = useState(false);
     const auth = FIREBASE_AUTH;
@@ -21,6 +22,7 @@ const CameraScreen = ({ navigation }) => {
     return (
         <View style={styles.container}>
             <Text style={styles.text}>Insert exercise analysis / pose detection logic here</Text>
+            <Text style={styles.text}>Performing: {exercise}</Text>
         </View>
     );
 };

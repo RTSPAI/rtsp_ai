@@ -24,9 +24,7 @@ const HomeScreen = ({ navigation }) => {
         <View style={styles.container}>
             <Ionicons.Button name="person" size={32} onPress={() => navigation.navigate("Profile")}>Profile</Ionicons.Button>
             <View style={styles.space}></View>
-            <Ionicons.Button name="camera" size={32} onPress={() => navigation.navigate("Warmup")}>Warm-up</Ionicons.Button>
-            {/* NOTE: THE EXERCISE ANALYSIS BUTTON IS TEMPORARY FOR NOW */}
-            <Ionicons.Button name="camera" size={32} onPress={() => navigation.navigate("Camera")}>Exercise Analysis</Ionicons.Button>
+            <Text style={styles.text}>Insert some welcome / simple tutorial text here...</Text>
             <Text style={styles.text}>Insert list of available exercises here...</Text>
             <ExerciseList navigation={navigation}/>
         </View>
