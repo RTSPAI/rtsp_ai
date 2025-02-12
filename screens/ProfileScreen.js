@@ -81,7 +81,6 @@ const ProfileScreen = ({ navigation }) => {
             <Ionicons.Button name="settings" size={32} onPress={() => navigation.navigate("Settings")}></Ionicons.Button>
             <View style={styles.listContainer}>
                 <FlatList
-                    style={styles.list}
                     data={sessions}
                     renderItem={renderItem}
                     keyExtractor={item => item.id}
