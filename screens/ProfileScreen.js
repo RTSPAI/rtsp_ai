@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, FlatList, Pressable } from 'react-native';
 import { FIREBASE_AUTH, FIREBASE_DB } from '../firebaseConfig';
-import {
-    ref, get, query, limitToFirst, orderByChild, limitToLast
-} from 'firebase/database';
+import { ref, get, query, orderByChild } from 'firebase/database';
 import { useAuthContext, resetScreens } from '../context/AuthContext';
 import Ionicons from '@expo/vector-icons/Ionicons';
 
@@ -76,7 +74,6 @@ const ProfileScreen = ({ navigation }) => {
         <View style={styles.container}>
             <Text style={styles.congratsText}>Welcome, {user.displayName}!</Text>
             <Text style={styles.text}>Insert logic to see session history here!</Text>
-            <Ionicons.Button name="body" size={32} onPress={() => navigation.navigate("Feedback")}>Sample Exercise</Ionicons.Button>
             <View style={styles.space}></View>
             <Ionicons.Button name="settings" size={32} onPress={() => navigation.navigate("Settings")}></Ionicons.Button>
             <View style={styles.listContainer}>

@@ -4,7 +4,6 @@ import { FIREBASE_AUTH } from '../firebaseConfig';
 import { useAuthContext, resetScreens } from '../context/AuthContext';
 
 const FeedbackScreen = ({ route, navigation }) => {
-    // TODO: Unpack the session object and display feedback data
     const { session } = route.params;
     const { user, loadingUser } = useAuthContext();
     const [loading, setLoading] = useState(false);
@@ -28,15 +27,12 @@ const FeedbackScreen = ({ route, navigation }) => {
     
     const renderItem = ({ item }) => <Item feedback={item} />;
 
-    // TODO: Display FlatList with session's feedback
-    // TODO ...
     return (
         <View style={styles.container}>
             <Text style={styles.text}>Insert loading of (a single/specific) exercise feedback here</Text>
             <Text>Exercise: {session.exercise}</Text>
             <Text>Created At: {session.createdAt}</Text>
             <Text>Duration: {session.duration}</Text>
-            <Text>Feedback: {session.feedback}</Text>
             <View style={styles.listContainer}>
                 <FlatList
                     data={session.feedback}
