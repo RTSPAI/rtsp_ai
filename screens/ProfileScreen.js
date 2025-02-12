@@ -4,7 +4,7 @@ import { FIREBASE_AUTH } from '../firebaseConfig';
 import { useAuthContext, resetScreens } from '../context/AuthContext';
 import Ionicons from '@expo/vector-icons/Ionicons';
 
-const HomeScreen = ({ navigation }) => {
+const ProfileScreen = ({ navigation }) => {
     const { user, loadingUser } = useAuthContext();
     const [loading, setLoading] = useState(false);
     const auth = FIREBASE_AUTH;
@@ -21,12 +21,11 @@ const HomeScreen = ({ navigation }) => {
 
     return (
         <View style={styles.container}>
-            <Ionicons.Button name="person" size={32} onPress={() => navigation.navigate("Profile")}>Profile</Ionicons.Button>
+            <Text style={styles.congratsText}>Welcome, {user.displayName}!</Text>
+            <Text style={styles.text}>Insert logic to see session history here!</Text>
+            <Ionicons.Button name="body" size={32} onPress={() => navigation.navigate("Feedback")}>Sample Exercise</Ionicons.Button>
             <View style={styles.space}></View>
-            <Ionicons.Button name="camera" size={32} onPress={() => navigation.navigate("Warmup")}>Warm-up</Ionicons.Button>
-            {/* NOTE: THE EXERCISE ANALYSIS BUTTON IS TEMPORARY FOR NOW */}
-            <Ionicons.Button name="camera" size={32} onPress={() => navigation.navigate("Camera")}>Exercise Analysis</Ionicons.Button>
-            <Text style={styles.text}>Insert list of available exercises here...</Text>
+            <Ionicons.Button name="settings" size={32} onPress={() => navigation.navigate("Settings")}></Ionicons.Button>
         </View>
     );
 };
@@ -37,13 +36,20 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
     },
+    congratsText: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        color: 'green',
+    },
     text: {
-
+        fontSize: 24,
+        fontWeight: 'bold',
+        color: 'black',
     },
     space: {
-        width: 20,
         height: 20,
-    },
+        width: 20,
+    }
 });
 
-export default HomeScreen;
+export default ProfileScreen;

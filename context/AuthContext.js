@@ -1,9 +1,22 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { FIREBASE_AUTH } from '../firebaseConfig';
 import { onAuthStateChanged } from "firebase/auth";
+import { CommonActions } from '@react-navigation/native';
 
 // Create the context
 const AuthContext = createContext();
+
+// Function to reset navigation stack to Login when user is not logged in
+export const resetScreens = (user, loadingUser, navigation) => {
+        if (!loadingUser && !user) {
+            navigation.dispatch(
+                CommonActions.reset({
+                    index: 0,
+                    routes: [{ name: 'Login' }],
+                })
+            );
+        }
+    }
 
 // Auth provider component
 export const AuthProvider = ({ children }) => {
