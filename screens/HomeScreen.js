@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import { FIREBASE_AUTH } from '../firebaseConfig';
 import { useAuthContext, resetScreens } from '../context/AuthContext';
 import Ionicons from '@expo/vector-icons/Ionicons';
@@ -21,13 +21,15 @@ const HomeScreen = ({ navigation }) => {
     }
 
     return (
-        <View style={styles.container}>
-            <Ionicons.Button name="person" size={32} onPress={() => navigation.navigate("Profile")}>Profile</Ionicons.Button>
-            <View style={styles.space}></View>
-            <Text style={styles.text}>Insert some welcome / simple tutorial text here...</Text>
-            <Text style={styles.text}>Insert list of available exercises here...</Text>
-            <ExerciseList navigation={navigation}/>
-        </View>
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+            <View style={styles.container}>
+                <Ionicons.Button name="person" size={32} onPress={() => navigation.navigate("Profile")}>Profile</Ionicons.Button>
+                <View style={styles.space}></View>
+                <Text style={styles.text}>Insert some welcome / simple tutorial text here...</Text>
+                <Text style={styles.text}>Insert list of available exercises here...</Text>
+                <ExerciseList navigation={navigation}/>
+            </View>
+        </TouchableWithoutFeedback>
     );
 };
 
