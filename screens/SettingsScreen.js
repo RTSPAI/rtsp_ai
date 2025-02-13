@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Button, Alert } from 'react-native';
+import DeleteAccountButton from '../components/DeleteAccountButton';
 import { FIREBASE_AUTH } from '../firebaseConfig';
 import { signOut } from "firebase/auth";
 import { useAuthContext, resetScreens } from '../context/AuthContext';
@@ -39,6 +40,7 @@ const SettingsScreen = ({ navigation }) => {
         <View style={styles.container}>
             <Text style={styles.text}>Insert settings logic here!</Text>
             <Button style={styles.warningText} title="Log Out" onPress={logOut} />
+            <DeleteAccountButton />
         </View>
     );
 };
