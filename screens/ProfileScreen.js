@@ -56,7 +56,7 @@ const ProfileScreen = ({ navigation }) => {
     }
 
     const onPress = (session) => {
-        navigation.navigate("Feedback", { "session" : session });
+        navigation.navigate("Feedback", { session });
     }
 
     const Item = ({ session }) => (
