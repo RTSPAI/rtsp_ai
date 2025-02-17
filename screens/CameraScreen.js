@@ -2,12 +2,22 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { FIREBASE_AUTH } from '../firebaseConfig';
 import { useAuthContext, resetScreens } from '../context/AuthContext';
+import { Camera, useCameraDevice, useCameraPermission } from 'react-native-vision-camera';
+import { useIsFocused } from '@react-navigation/native';
+import { useAppState } from '@react-native-community/hooks';
 
 const CameraScreen = ({ route, navigation }) => {
     const { exercise } = route.params;
     const { user, loadingUser } = useAuthContext();
     const [loading, setLoading] = useState(false);
     const auth = FIREBASE_AUTH;
+
+    // Camera utilization
+    const { hasPermission, requestPermission } = useCameraPermission();
+    const device = useCameraDevice('front');
+    const isFocused = useIsFocused()
+    const appState = useAppState()
+    const isActive = isFocused && appState === "active"
 
     // After rending, verify is user is signed in
     useEffect(() => {
@@ -19,10 +29,22 @@ const CameraScreen = ({ route, navigation }) => {
         return null;
     }
 
+    // Check Camera permissions and request if necessary
+    if (!hasPermission) {
+        requestPermission();
+    }
+
     return (
         <View style={styles.container}>
-            <Text style={styles.text}>Insert exercise analysis / pose detection logic here</Text>
-            <Text style={styles.text}>Performing: {exercise}</Text>
+            {hasPermission ? (
+                <Camera
+                    style={StyleSheet.absoluteFill}
+                    device={device}
+                    isActive={isActive}
+                />
+            ) : (
+                <Text style={styles.text}>No camera permissions given.</Text>
+            )}
         </View>
     );
 };
