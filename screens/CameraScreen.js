@@ -2,9 +2,21 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { FIREBASE_AUTH } from '../firebaseConfig';
 import { useAuthContext, resetScreens } from '../context/AuthContext';
-import { Camera, useCameraDevice, useCameraPermission, useFrameProcessor } from 'react-native-vision-camera';
+import { Camera, useCameraDevice, useCameraPermission, useFrameProcessor, VisionCameraProxy, Frame } from 'react-native-vision-camera';
 import { useIsFocused } from '@react-navigation/native';
 import { useAppState } from '@react-native-community/hooks';
+
+// Initialize custom Frame Processor Plugin for pose detection
+const plugin = VisionCameraProxy.initFrameProcessorPlugin('detectPose');
+
+// Define function to call custom frame processor.
+export function detectPose(frame) {
+    'worklet'
+    if (plugin == null) {
+        throw new Error("Failed to load Frame Processor Plugin!");
+    }
+    return plugin.call(frame);
+}
 
 const CameraScreen = ({ route, navigation }) => {
     const { exercise } = route.params;
@@ -36,7 +48,11 @@ const CameraScreen = ({ route, navigation }) => {
 
     const frameProcessor = useFrameProcessor((frame) => {
         'worklet'
-        console.log(`${Date.now()} | Frame: ${frame.width}x${frame.height} (${frame.pixelFormat})`)
+        // Call custom Frame Processor (pose detection)
+        const data = detectPose(frame);
+        // Output data
+        console.log(`${Date.now()} | Frame: ${frame.width}x${frame.height} (${frame.pixelFormat})`);
+        console.log(`Data: ${data}`);
     }, [])
 
     return (

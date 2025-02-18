@@ -16,6 +16,8 @@
 		96905EF65AED1B983A6B3ABC /* libPods-rtspai.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 58EEBF8E8E6FB1BC6CAF49B5 /* libPods-rtspai.a */; };
 		B18059E884C0ABDD17F3DC3D /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC715A2D49A985799AEE119 /* ExpoModulesProvider.swift */; };
 		BB2F792D24A3F905000567C9 /* Expo.plist in Resources */ = {isa = PBXBuildFile; fileRef = BB2F792C24A3F905000567C9 /* Expo.plist */; };
+		AA57ECFDFF4F4EE3B7D39405 /* PoseFrameProcessor.m in Sources */ = {isa = PBXBuildFile; fileRef = E8CD5528862C4A1DAEFF791C /* PoseFrameProcessor.m */; };
+		D7D3FFFC947C4A6FA3D20D0E /* PoseFrameProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19AE4224DEF4429AA1B54E07 /* PoseFrameProcessor.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -35,6 +37,8 @@
 		BB2F792C24A3F905000567C9 /* Expo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Expo.plist; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		FAC715A2D49A985799AEE119 /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-rtspai/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
+		E8CD5528862C4A1DAEFF791C /* PoseFrameProcessor.m */ = {isa = PBXFileReference; name = "PoseFrameProcessor.m"; path = "PoseFrameProcessor.m"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; explicitFileType = undefined; includeInIndex = 0; };
+		19AE4224DEF4429AA1B54E07 /* PoseFrameProcessor.swift */ = {isa = PBXFileReference; name = "PoseFrameProcessor.swift"; path = "PoseFrameProcessor.swift"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.swift; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -91,6 +95,7 @@
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
 				D65327D7A22EEC0BE12398D9 /* Pods */,
 				D7E4C46ADA2E9064B798F356 /* ExpoModulesProviders */,
+				EB2D271F31DB4AD1BD3F2FFB /* PoseFrameProcessor */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -137,6 +142,16 @@
 				92DBD88DE9BF7D494EA9DA96 /* rtspai */,
 			);
 			name = ExpoModulesProviders;
+			sourceTree = "<group>";
+		};
+		EB2D271F31DB4AD1BD3F2FFB /* PoseFrameProcessor */ = {
+			isa = PBXGroup;
+			children = (
+				E8CD5528862C4A1DAEFF791C /* PoseFrameProcessor.m */,
+				19AE4224DEF4429AA1B54E07 /* PoseFrameProcessor.swift */,
+			);
+			name = PoseFrameProcessor;
+			path = PoseFrameProcessor;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -329,6 +344,8 @@
 				13B07FC11A68108700A75B9A /* main.m in Sources */,
 				B18059E884C0ABDD17F3DC3D /* ExpoModulesProvider.swift in Sources */,
 				1647B26A1B0C4E58B3E46189 /* noop-file.swift in Sources */,
+				AA57ECFDFF4F4EE3B7D39405 /* PoseFrameProcessor.m in Sources */,
+				D7D3FFFC947C4A6FA3D20D0E /* PoseFrameProcessor.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
