@@ -50,9 +50,9 @@ const CameraScreen = ({ route, navigation }) => {
         'worklet'
         // Call custom Frame Processor (pose detection)
         const data = detectPose(frame);
-        // Output data
+        // Output
         console.log(`${Date.now()} | Frame: ${frame.width}x${frame.height} (${frame.pixelFormat})`);
-        console.log(`Data: ${data}`);
+        console.log('Data:', data);
     }, [])
 
     return (
@@ -64,6 +64,7 @@ const CameraScreen = ({ route, navigation }) => {
                     isActive={isActive}
                     frameProcessor={frameProcessor}
                     enableFpsGraph
+                    pixelFormat='rgb'
                 />
             ) : (
                 <Text style={styles.text}>No camera permissions given.</Text>
