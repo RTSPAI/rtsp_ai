@@ -63,4 +63,6 @@ target 'rtspai' do
       end
     end
   end
+
+  pod 'MediaPipeTasksVision'
 end
