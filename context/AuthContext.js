@@ -9,6 +9,7 @@ const AuthContext = createContext();
 // Function to reset navigation stack to Login when user is not logged in
 export const resetScreens = (user, loadingUser, navigation) => {
         if (!loadingUser && !user) {
+            // TODO: Currently not working due to issues with navigation/screen
             navigation.dispatch(
                 CommonActions.reset({
                     index: 0,

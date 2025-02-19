@@ -22,7 +22,7 @@ const LoginScreen = ({ navigation }) => {
 				return;
 			}
 			// Navigate to Home page
-			navigation.replace('Home');
+			navigation.navigate('Home');
 		} catch (error) {
 			const errorCode = error.code;
 			const errorMessage = error.message;
@@ -82,7 +82,7 @@ const LoginScreen = ({ navigation }) => {
 						<Button title="Login" onPress={signIn} />
 						<Text style={styles.switchText}>
 							Don't have an account?{' '}
-							<Text style={styles.link} onPress={() => navigation.replace('Signup')}>
+							<Text style={styles.link} onPress={() => navigation.navigate('Signup')}>
 								Sign Up
 							</Text>
 						</Text>

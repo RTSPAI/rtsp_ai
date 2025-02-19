@@ -84,7 +84,7 @@ const SignupScreen = ({ navigation }) => {
 						<Button title="Sign Up" onPress={signUp} />
 						<Text style={styles.switchText}>
 							Already have an account?{' '}
-							<Text style={styles.link} onPress={() => navigation.replace('Login')}>
+							<Text style={styles.link} onPress={() => navigation.navigate('Login')}>
 								Log In
 							</Text>
 						</Text>
