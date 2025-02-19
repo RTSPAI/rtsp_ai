@@ -27,9 +27,9 @@ const CameraScreen = ({ route, navigation }) => {
     // Camera utilization
     const { hasPermission, requestPermission } = useCameraPermission();
     const device = useCameraDevice('front');
-    const isFocused = useIsFocused()
-    const appState = useAppState()
-    const isActive = isFocused && appState === "active"
+    const isFocused = useIsFocused();
+    const appState = useAppState();
+    const isActive = isFocused && appState === "active";
 
     // After rending, verify is user is signed in
     useEffect(() => {
