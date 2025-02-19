@@ -31,8 +31,8 @@ const ProfileScreen = ({ navigation }) => {
                         orderedSessions.push({ id: childSnapshot.key, ...childSnapshot.val() });
                     });
                     // Sort the data
-//                  // TODO: Here or later, only query for necessary data 
-//                  // TODO: and process the createdAt field as epoch
+                    // TODO: Here or later, only query for necessary data 
+                    // TODO: and process the createdAt field as epoch
                     orderedSessions.sort((a, b) => b.createdAt - a.createdAt);
                 } else {
                     console.log("No history data found.");
