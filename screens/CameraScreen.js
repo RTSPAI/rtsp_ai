@@ -55,6 +55,7 @@ const CameraScreen = ({ route, navigation }) => {
 
     // Function to update the useState of repetition count for the container
     const updateReps = useRunOnJS((reps) => {
+        repCount.value = reps;
         setRepetitions(reps);
     });
 
