@@ -3,16 +3,18 @@ import MLKit
 
 @objc(PoseFrameProcessorPlugin)
 public class PoseFrameProcessorPlugin: FrameProcessorPlugin {
+    // Create an instance of PoseDetector
+    private lazy var poseDetector: PoseDetector = {
+        let options = AccuratePoseDetectorOptions()
+        options.detectorMode = .stream
+        return PoseDetector.poseDetector(options: options)
+    }()
+
   public override init(proxy: VisionCameraProxyHolder, options: [AnyHashable: Any]! = [:]) {
     super.init(proxy: proxy, options: options)
   }
   
-  public override func callback(_ frame: Frame, withArguments arguments: [AnyHashable: Any]?) -> Any? {
-    // Create an instance of PoseDetector
-    let options = PoseDetectorOptions() // or AccuratePoseDetectorOptions()
-    options.detectorMode = .stream
-    let poseDetector = PoseDetector.poseDetector(options: options)
-    
+  public override func callback(_ frame: Frame, withArguments arguments: [AnyHashable: Any]?) -> Any? {  
     // Prepare the input image
     let visionImage = VisionImage(buffer: frame.buffer)
     visionImage.orientation = frame.orientation
