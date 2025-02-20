@@ -9,7 +9,8 @@ import { computeAngles, computeLandmarks, drawAngles, drawLandmarkPoints, drawSk
 import { pushup } from '../services/Exercises';
 import { useRunOnJS } from 'react-native-worklets-core';
 import { useSharedValue } from 'react-native-reanimated';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import FontIcon from 'react-native-vector-icons/FontAwesome';
+import MaterialIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 // Initialize custom Frame Processor Plugin for pose detection
 const plugin = VisionCameraProxy.initFrameProcessorPlugin('detectPose');
@@ -121,11 +122,27 @@ const CameraScreen = ({ route, navigation }) => {
                     </View>
                     <View style={styles.flipButtonContainer}>
                         {/* Flip Camera Button with Icon */}
-                        <Icon
+                        <FontIcon
                             name="refresh" // can also use camera icon instead of flip icon
                             size={30}
                             color="#fff"
                             onPress={flipCamera}
+                        />
+                    </View>
+                    <View style={styles.anglesButtonContainer}>
+                        <MaterialIcon
+                            name="math-compass"
+                            size={30}
+                            color="#fff"
+                            onPress={() => setShowAngles(!showAngles)}
+                        />
+                    </View>
+                    <View style={styles.landmarksButtonContainer}>
+                        <FontIcon
+                            name="male"
+                            size={30}
+                            color="#fff"
+                            onPress={() => setShowLandmarks(!showLandmarks)}
                         />
                     </View>
                 </>
@@ -164,6 +181,16 @@ const styles = StyleSheet.create({
 		position: 'absolute',
 		top: 100,
 		right: 20,
+	},
+    anglesButtonContainer: {
+		position: 'absolute',
+		top: 150,
+        right: 20,
+	},
+    landmarksButtonContainer: {
+		position: 'absolute',
+		top: 200,
+        right: 26,
 	},
 });
 
