@@ -1,28 +1,95 @@
-// Push-up movement thresholds below
-// TODO: Add hip/shoulder angles
-// TODO: Add squat logic
+// TODO: Improve complexity of each exercise to take into account multiple angles.
+// TODO: At the same time, ensure that there is some leniency if some angles are not found.
 
-// Function to detect if a push-up has been completed and return the updated stage
-export function pushup(angles_dict, currentStage, currentRep) {
+// TODO: Implement "FLAGS" functionality to call out user mistakes, such as incorrect
+// TODO: posture based on angles (overextending, incorrect form in other parts, etc)
+
+// Function to detect if a pull-up has been completed and return the updated stage
+function pullup(angles_dict, currentStage, currentRep) {
     'worklet';
+    // Define required angles and thresholds
     const leftElbowAngle = angles_dict['LeftElbow'];
     const rightElbowAngle = angles_dict['RightElbow'];
 
+    // Elbow thresholds
+    const E_LOW = 90;
+    const E_HIGH = 130
+
     // 90 degrees is the current threshold to see if someone went down
     // 130 degrees is the current threshold to see if someone comes back up
-    if (leftElbowAngle < 90 && rightElbowAngle < 90) {
+    if (leftElbowAngle < E_LOW && rightElbowAngle < E_LOW) {
         if (currentStage.value !== 'down') {
             currentStage.value = 'down';
         }
-    } 
-    else if (leftElbowAngle > 130 && rightElbowAngle > 130) {
+    }
+    else if (leftElbowAngle > E_HIGH && rightElbowAngle > E_HIGH) {
         if (currentStage.value === 'down') {
             currentStage.value = 'up';
             currentRep.value += 1;
         }
-  }
+    }
 }
 
-export function squat(angles_dict, currentStage, currentRep) {
-  // Implement similar logic for squat tracking
+// Function to detect if a push-up has been completed and return the updated stage
+function pushup(angles_dict, currentStage, currentRep) {
+    'worklet';
+    // Define required angles and thresholds
+    const leftElbowAngle = angles_dict['LeftElbow'];
+    const rightElbowAngle = angles_dict['RightElbow'];
+
+    // Elbow thresholds
+    const E_LOW = 90;
+    const E_HIGH = 130
+
+    // 90 degrees is the current threshold to see if someone went down
+    // 130 degrees is the current threshold to see if someone comes back up
+    if (leftElbowAngle < E_LOW && rightElbowAngle < E_LOW) {
+        if (currentStage.value !== 'down') {
+            currentStage.value = 'down';
+        }
+    }
+    else if (leftElbowAngle > E_HIGH && rightElbowAngle > E_HIGH) {
+        if (currentStage.value === 'down') {
+            currentStage.value = 'up';
+            currentRep.value += 1;
+        }
+    }
+}
+
+// Function to detect if a squat has been completed and return the updated stage
+function squat(angles_dict, currentStage, currentRep) {
+    'worklet';
+    // Define required angles and thresholds
+    const leftKneeAngle = angles_dict['LeftKnee'];
+    const rightKneeAngle = angles_dict['RightKnee'];
+
+    // Knee thresholds
+    const K_LOW = 100
+    const K_HIGH = 130
+
+    // 90 degrees is the current threshold to see if someone went down
+    // 120 degrees is the current threshold to see if someone comes back up
+    if (leftKneeAngle < K_LOW && rightKneeAngle < K_LOW) {
+        if (currentStage.value !== 'down') {
+            currentStage.value = 'down';
+        }
+    }
+    else if (leftKneeAngle > K_HIGH && rightKneeAngle > K_HIGH) {
+        if (currentStage.value === 'down') {
+            currentStage.value = 'up';
+            currentRep.value += 1;
+        }
+    }
+}
+
+export function exerciseAnalysis(exercise, angles_dict, repStage, repCount) {
+    'worklet'
+    // Call exercise function and increment the repCount based on angles and repStage value
+    if (exercise === "Pull Ups") {
+        pullup(angles_dict, repStage, repCount);
+    } else if (exercise === "Push Ups") {
+        pushup(angles_dict, repStage, repCount);
+    } else if (exercise === "Squats") {
+        squat(angles_dict, repStage, repCount);
+    }
 }

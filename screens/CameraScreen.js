@@ -6,7 +6,7 @@ import { Camera, useCameraDevice, useCameraPermission, useSkiaFrameProcessor, Vi
 import { useIsFocused } from '@react-navigation/native';
 import { useAppState } from '@react-native-community/hooks';
 import { computeAngles, computeLandmarks, drawAngles, drawLandmarkPoints, drawSkeleton } from '../services/PoseDetection';
-import { pushup } from '../services/Exercises';
+import { exerciseAnalysis } from '../services/Exercises';
 import { useRunOnJS } from 'react-native-worklets-core';
 import { useSharedValue } from 'react-native-reanimated';
 import FontIcon from 'react-native-vector-icons/FontAwesome';
@@ -85,11 +85,8 @@ const CameraScreen = ({ route, navigation }) => {
         // Render the frame on the Skia Canvas
         frame.render();
 
-        if (exercise === "Push Ups") {
-            // Call pushup function and increment the repCount based on repStage value
-            pushup(angles_dict, repStage, repCount);
-        }
-        //TODO: SQUATS and PULL UPS - fix logic first in Exercises.js
+        // Perform analysis on the current exercise based on angles and repetition stage
+        exerciseAnalysis(exercise, angles_dict, repStage, repCount);
 
         // Trigger UI update
         updateReps(repCount.value);
