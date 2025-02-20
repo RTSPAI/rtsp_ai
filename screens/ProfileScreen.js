@@ -78,8 +78,8 @@ const ProfileScreen = ({ navigation }) => {
             <Text style={styles.title}>Welcome, {getFirstName(user.displayName)}</Text>
             <Text style={styles.subtitle}>View your session history below.</Text>
 
-            <TouchableOpacity style={styles.profileButton} onPress={() => navigation.navigate('Settings')}>
-                <Text style={styles.profileButtonText}>Settings</Text>
+            <TouchableOpacity style={styles.settingsButton} onPress={() => navigation.navigate('Settings')}>
+                <Text style={styles.settingsButtonText}>Settings</Text>
             </TouchableOpacity>
 
             <View style={styles.listContainer}>
@@ -114,14 +114,14 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         paddingHorizontal: 20,
     },
-    profileButton: {
+    settingsButton: {
         backgroundColor: '#6D8E93',
         paddingVertical: 12,
         paddingHorizontal: 24,
         borderRadius: 10,
         marginBottom: 20,
     },
-    profileButtonText: {
+    settingsButtonText: {
         color: '#FFF',
         fontSize: 16,
         fontWeight: 'bold',
@@ -135,7 +135,7 @@ const styles = StyleSheet.create({
         maxHeight: 400,
     },
     item: {
-        backgroundColor: '#f9c74f',
+        backgroundColor: '#E4E4E4',
         padding: 15,
         marginVertical: 8,
         borderRadius: 8,
