@@ -9,6 +9,7 @@ import { computeAngles, computeLandmarks, drawAngles, drawLandmarkPoints, drawSk
 import { pushup } from '../services/Exercises';
 import { useRunOnJS } from 'react-native-worklets-core';
 import { useSharedValue } from 'react-native-reanimated';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 // Initialize custom Frame Processor Plugin for pose detection
 const plugin = VisionCameraProxy.initFrameProcessorPlugin('detectPose');
@@ -31,10 +32,16 @@ const CameraScreen = ({ route, navigation }) => {
 
     // Camera utilization
     const { hasPermission, requestPermission } = useCameraPermission();
-    const device = useCameraDevice('front');
+    const [cameraDevice, setCameraDevice] = useState('front');
+    const device = useCameraDevice(cameraDevice);
     const isFocused = useIsFocused();
     const appState = useAppState();
     const isActive = isFocused && appState === "active";
+
+    // Flip camera function on press
+    const flipCamera = () => {
+		setCameraDevice((prevDevice) => (prevDevice === 'front' ? 'back' : 'front'));
+	};
 
     // States to control landmarks and angles visibility
     const [showLandmarks, setShowLandmarks] = useState(true);
@@ -112,6 +119,15 @@ const CameraScreen = ({ route, navigation }) => {
                     <View style={styles.repCounterContainer}>
                         <Text style={styles.repCounterText}>Reps: {repetitionCount}</Text>
                     </View>
+                    <View style={styles.flipButtonContainer}>
+                        {/* Flip Camera Button with Icon */}
+                        <Icon
+                            name="refresh" // can also use camera icon instead of flip icon
+                            size={30}
+                            color="#fff"
+                            onPress={flipCamera}
+                        />
+                    </View>
                 </>
             ) : (
                 <Text style={styles.text}>No camera permissions given.</Text>
@@ -144,6 +160,11 @@ const styles = StyleSheet.create({
         fontSize: 20,
         fontWeight: 'bold',
     },
+    flipButtonContainer: {
+		position: 'absolute',
+		top: 100,
+		right: 20,
+	},
 });
 
 export default CameraScreen;
