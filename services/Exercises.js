@@ -124,14 +124,14 @@ function squat(landmarks_dict, angles_dict, flags_dict, currentStage, currentRep
     }
 
     if (!Object.keys(flags_dict.value).includes("KneesFlag")) {
-        flags_dict.value["KneesFlag"] = {"count": 100000, "message": "Do your best to break 90 degrees", "min_angle": 180};
+        flags_dict.value["KneesFlag"] = {"count": 100000, "message": "Make sure to do your best to break 90 degrees with your knees", "min_angle": 180};
     }
     if (currentStage.value === "down") {
         const currMin = flags_dict.value["KneesFlag"]["min_angle"];
         const lowestKneeAngle = Math.min(angles_dict["LeftKnee"], angles_dict["RightKnee"]);
         flags_dict.value["KneesFlag"]["min_angle"] = Math.min(currMin, lowestKneeAngle);
 
-        if (flags_dict.value["KneesFlag"]["min_angle"] < 80) { 
+        if (flags_dict.value["KneesFlag"]["min_angle"] < 70) { 
             flags_dict.value["KneesFlag"]["count"] = 0;
         }
     }
