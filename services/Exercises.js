@@ -5,7 +5,7 @@
 // TODO: posture based on angles (overextending, incorrect form in other parts, etc)
 
 // Function to detect if a pull-up has been completed and return the updated stage
-function pullup(angles_dict, currentStage, currentRep) {
+function pullup(landmarks_dict, angles_dict, flags_dict, currentStage, currentRep) {
     'worklet';
     // Define required angles and thresholds
     const leftElbowAngle = angles_dict['LeftElbow'];
@@ -31,7 +31,7 @@ function pullup(angles_dict, currentStage, currentRep) {
 }
 
 // Function to detect if a push-up has been completed and return the updated stage
-function pushup(angles_dict, currentStage, currentRep) {
+function pushup(landmarks_dict, angles_dict, flags_dict, currentStage, currentRep) {
     'worklet';
     // Define required angles and thresholds
     const leftElbowAngle = angles_dict['LeftElbow'];
@@ -54,10 +54,30 @@ function pushup(angles_dict, currentStage, currentRep) {
             currentRep.value += 1;
         }
     }
+
+    // Analyze exercise flags based on user's posture
+    // Hip Angle Flag
+    if (angles_dict["LeftHip"] < 165 || angles_dict["RightHip"] < 165) {
+        if (!Object.keys(flags_dict.value).includes("HipsFlag")) {
+            flags_dict.value["HipsFlag"] = {"count": 0, "message": "Make sure to keep your hips straight"};
+        }
+        flags_dict.value["HipsFlag"]["count"] += 1;
+    }
+
+    // Shoulder Position Flag
+    // TODO: ...
+
+    // Knee Angle Flag
+    if (angles_dict["LeftKnee"] < 150 || angles_dict["RightKnee"] < 150) {
+        if (!Object.keys(flags_dict.value).includes("KneesFlag")) {
+            flags_dict.value["KneesFlag"] = {"count": 0, "message": "Make sure to keep your knees straight"};
+        }
+        flags_dict.value["KneesFlag"]["count"] += 1;
+    }
 }
 
 // Function to detect if a squat has been completed and return the updated stage
-function squat(angles_dict, currentStage, currentRep) {
+function squat(landmarks_dict, angles_dict, flags_dict, currentStage, currentRep) {
     'worklet';
     // Define required angles and thresholds
     const leftKneeAngle = angles_dict['LeftKnee'];
@@ -82,14 +102,16 @@ function squat(angles_dict, currentStage, currentRep) {
     }
 }
 
-export function exerciseAnalysis(exercise, angles_dict, repStage, repCount) {
+export function exerciseAnalysis(exercise, landmarks_dict, angles_dict, flags_dict, repStage, repCount) {
     'worklet'
+    if (Object.keys(landmarks_dict).length === 0) return;
+
     // Call exercise function and increment the repCount based on angles and repStage value
     if (exercise === "Pull Ups") {
-        pullup(angles_dict, repStage, repCount);
+        pullup(landmarks_dict, angles_dict, flags_dict, repStage, repCount);
     } else if (exercise === "Push Ups") {
-        pushup(angles_dict, repStage, repCount);
+        pushup(landmarks_dict, angles_dict, flags_dict, repStage, repCount);
     } else if (exercise === "Squats") {
-        squat(angles_dict, repStage, repCount);
+        squat(landmarks_dict, angles_dict, flags_dict, repStage, repCount);
     }
 }

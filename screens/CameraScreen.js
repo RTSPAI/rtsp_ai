@@ -53,10 +53,22 @@ const CameraScreen = ({ route, navigation }) => {
     const repCount = useSharedValue(0);
     const repStage = useSharedValue("up");
 
+    // Use Shared Variable for flag counting
+    const flags_dict = useSharedValue({});
+
     // Function to update the useState of repetition count for the container
-    const updateReps = useRunOnJS((reps) => {
+    const updateReps = useRunOnJS((reps, flags) => {
+        // Exit if no change to repetition count
+        if (reps <= repCount.value)
+            return;
+
+        // Increment repetition
         repCount.value = reps;
         setRepetitions(reps);
+
+        // Display exercise flags and clear
+        console.log("Flags:", flags.value);
+        flags.value = {};
     });
 
     // After rending, verify is user is signed in
@@ -87,10 +99,10 @@ const CameraScreen = ({ route, navigation }) => {
         frame.render();
 
         // Perform analysis on the current exercise based on angles and repetition stage
-        exerciseAnalysis(exercise, angles_dict, repStage, repCount);
+        exerciseAnalysis(exercise, landmarks_dict, angles_dict, flags_dict, repStage, repCount);
 
         // Trigger UI update
-        updateReps(repCount.value);
+        updateReps(repCount.value, flags_dict);
 
         // Draw skeleton and landmarks
         if (showLandmarks) {
