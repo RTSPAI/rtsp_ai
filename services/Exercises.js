@@ -11,6 +11,9 @@ function pullup(landmarks_dict, angles_dict, flags_dict, currentStage, currentRe
     const leftElbowAngle = angles_dict['LeftElbow'];
     const rightElbowAngle = angles_dict['RightElbow'];
 
+    if (landmarks_dict["LeftElbow"]['confidence'] < .5 && landmarks_dict["RightElbow"]['confidence'] < .5 )
+        return;
+
     // Elbow thresholds
     const E_LOW = 90;
     const E_HIGH = 130
@@ -40,6 +43,10 @@ function pushup(landmarks_dict, angles_dict, flags_dict, currentStage, currentRe
     // Elbow thresholds
     const E_LOW = 90;
     const E_HIGH = 130
+
+    if (landmarks_dict["LeftElbow"]['confidence'] < .5 && landmarks_dict["RightElbow"]['confidence'] < .5 )
+        return;
+
 
     // 90 degrees is the current threshold to see if someone went down
     // 130 degrees is the current threshold to see if someone comes back up
@@ -82,6 +89,9 @@ function squat(landmarks_dict, angles_dict, flags_dict, currentStage, currentRep
     // Define required angles and thresholds
     const leftKneeAngle = angles_dict['LeftKnee'];
     const rightKneeAngle = angles_dict['RightKnee'];
+
+    if (landmarks_dict["LeftKnee"]['confidence'] < .5 && landmarks_dict["RightKnee"]['confidence'] < .5 )
+        return;
 
     // Knee thresholds
     const K_LOW = 100
