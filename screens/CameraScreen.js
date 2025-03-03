@@ -1,12 +1,16 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, Platform } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import { FIREBASE_AUTH } from '../firebaseConfig';
 import { useAuthContext, resetScreens } from '../context/AuthContext';
-import { Camera, useCameraDevice, useCameraPermission, useSkiaFrameProcessor, VisionCameraProxy, Frame, runAsync } from 'react-native-vision-camera';
+import { Camera, useCameraDevice, useCameraPermission, useSkiaFrameProcessor, VisionCameraProxy } from 'react-native-vision-camera';
 import { useIsFocused } from '@react-navigation/native';
 import { useAppState } from '@react-native-community/hooks';
-import { Skia, PaintStyle, matchFont } from '@shopify/react-native-skia';
-import { computeAngles, computeLandmarks, drawSkeleton } from '../services/PoseDetection';
+import { computeAngles, computeLandmarks, drawAngles, drawLandmarkPoints, drawSkeleton } from '../services/PoseDetection';
+import { exerciseAnalysis } from '../services/Exercises';
+import { useRunOnJS } from 'react-native-worklets-core';
+import { useSharedValue } from 'react-native-reanimated';
+import FontIcon from 'react-native-vector-icons/FontAwesome';
+import MaterialIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 // Initialize custom Frame Processor Plugin for pose detection
 const plugin = VisionCameraProxy.initFrameProcessorPlugin('detectPose');
@@ -21,6 +25,7 @@ export function detectPose(frame) {
 }
 
 const CameraScreen = ({ route, navigation }) => {
+    // Basic screen states and authentication
     const { exercise } = route.params;
     const { user, loadingUser } = useAuthContext();
     const [loading, setLoading] = useState(false);
@@ -28,34 +33,43 @@ const CameraScreen = ({ route, navigation }) => {
 
     // Camera utilization
     const { hasPermission, requestPermission } = useCameraPermission();
-    const device = useCameraDevice('front');
+    const [cameraDevice, setCameraDevice] = useState('front');
+    const device = useCameraDevice(cameraDevice);
     const isFocused = useIsFocused();
     const appState = useAppState();
     const isActive = isFocused && appState === "active";
 
-
-
-    // State to control landmark and angle visibility
-	const [showLandmarks, setShowLandmarks] = useState(true);
-	const [showAngles, setShowAngles] = useState(true);
-
-    // Set color of joints and skeleton 
-	const paint = Skia.Paint();
-	paint.setStyle(PaintStyle.Fill);
-	paint.setStrokeWidth(2);
-    paint.setColor(Skia.Color('red'));
-
-	// Set font for Skia text
-	const fontFamily = Platform.select({ ios: "Helvetica", default: "serif" });
-	const fontStyle = {
-		fontFamily,
-		fontSize: 54, // Increased font size
-		fontStyle: "normal",
-		fontWeight: "bold",
+    // Flip camera function on press
+    const flipCamera = () => {
+		setCameraDevice((prevDevice) => (prevDevice === 'front' ? 'back' : 'front'));
 	};
-	const font = matchFont(fontStyle);
 
+    // States to control landmarks and angles visibility
+    const [showLandmarks, setShowLandmarks] = useState(true);
+    const [showAngles, setShowAngles] = useState(true);
+    const [repetitionCount, setRepetitions] = useState(0);
 
+    // Use Shared Variable for repCount and repStage for easy access
+    const repCount = useSharedValue(0);
+    const repStage = useSharedValue("up");
+
+    // Use Shared Variable for flag counting
+    const flags_dict = useSharedValue({});
+
+    // Function to update the useState of repetition count for the container
+    const updateReps = useRunOnJS((reps, flags) => {
+        // Exit if no change to repetition count
+        if (reps <= repCount.value)
+            return;
+
+        // Increment repetition
+        repCount.value = reps;
+        setRepetitions(reps);
+
+        // Display exercise flags and clear
+        console.log("Flags:", flags.value);
+        flags.value = {};
+    });
 
     // After rending, verify is user is signed in
     useEffect(() => {
@@ -79,60 +93,69 @@ const CameraScreen = ({ route, navigation }) => {
 
         // Compute data dictionaries
         let landmarks_dict = computeLandmarks(data);
-        // console.log(landmarks_dict);
         let angles_dict = computeAngles(landmarks_dict);
-        // console.log(angles_dict);
 
-        frame.render()
+        // Render the frame on the Skia Canvas
+        frame.render();
 
-        // Draw circles (landmarks)
+        // Perform analysis on the current exercise based on angles and repetition stage
+        exerciseAnalysis(exercise, landmarks_dict, angles_dict, flags_dict, repStage, repCount);
+
+        // Trigger UI update
+        updateReps(repCount.value, flags_dict);
+
+        // Draw skeleton and landmarks
         if (showLandmarks) {
-            for (const landmark in landmarks_dict) {
-                let l = landmarks_dict[landmark]
-                frame.drawCircle(
-                    l['x'], //* Number(frameWidth),
-                    l['y'],// * Number(frameHeight),
-                    6,
-                    paint,
-                );
-            }
-        }
-
-        // Draw skeleton
-        if (showLandmarks) {
+            drawLandmarkPoints(frame, landmarks_dict);
             drawSkeleton(frame, landmarks_dict);
         }
 
         // Draw angles
         if (showAngles) {
-            for (const [landmark, angle] of Object.entries(angles_dict)) {
-                if (angle == undefined || angle < 0 || angle > 360)
-                    continue;
-                let x = landmarks_dict[landmark]['x']// * Number(frameWidth);
-                let y = landmarks_dict[landmark]['y']// * Number(frameHeight);
-                let text = parseInt(angle) + "°";
-                let paint = Skia.Paint();
-                paint.setColor(Skia.Color('white'));
-
-                frame.save();
-                frame.rotate(270, x, y);
-                frame.drawText(text, x, y, paint, font);
-                frame.restore();
-            }
+            drawAngles(frame, angles_dict, landmarks_dict);
         }
-        // console.log(`Finished drawing | Timestamp: ${Date.now()}`)
     }, [showAngles, showLandmarks]);
 
     return (
         <View style={styles.container}>
             {hasPermission ? (
-                <Camera
-                    style={StyleSheet.absoluteFill}
-                    device={device}
-                    isActive={isActive}
-                    frameProcessor={frameProcessor}
-                    enableFpsGraph
-                />
+                <>
+                    <Camera
+                        style={StyleSheet.absoluteFill}
+                        device={device}
+                        isActive={isActive}
+                        frameProcessor={frameProcessor}
+                        enableFpsGraph
+                    />
+                    <View style={styles.repCounterContainer}>
+                        <Text style={styles.repCounterText}>Reps: {repetitionCount}</Text>
+                    </View>
+                    <View style={styles.flipButtonContainer}>
+                        {/* Flip Camera Button with Icon */}
+                        <FontIcon
+                            name="refresh" // can also use camera icon instead of flip icon
+                            size={30}
+                            color="#fff"
+                            onPress={flipCamera}
+                        />
+                    </View>
+                    <View style={styles.anglesButtonContainer}>
+                        <MaterialIcon
+                            name="math-compass"
+                            size={30}
+                            color="#fff"
+                            onPress={() => setShowAngles(!showAngles)}
+                        />
+                    </View>
+                    <View style={styles.landmarksButtonContainer}>
+                        <FontIcon
+                            name="male"
+                            size={30}
+                            color="#fff"
+                            onPress={() => setShowLandmarks(!showLandmarks)}
+                        />
+                    </View>
+                </>
             ) : (
                 <Text style={styles.text}>No camera permissions given.</Text>
             )}
@@ -151,6 +174,34 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         color: 'black',
     },
+    repCounterContainer: {
+        position: 'absolute',
+        top: 50,
+        right: 20,
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        padding: 10,
+        borderRadius: 5,
+    },
+    repCounterText: {
+        color: 'white',
+        fontSize: 20,
+        fontWeight: 'bold',
+    },
+    flipButtonContainer: {
+		position: 'absolute',
+		top: 100,
+		right: 20,
+	},
+    anglesButtonContainer: {
+		position: 'absolute',
+		top: 150,
+        right: 20,
+	},
+    landmarksButtonContainer: {
+		position: 'absolute',
+		top: 200,
+        right: 26,
+	},
 });
 
 export default CameraScreen;

@@ -1,7 +1,11 @@
+import { Platform } from 'react-native';
 import { Skia, PaintStyle, matchFont } from '@shopify/react-native-skia';
 
+// Export style variables for drawing on screen
+const SKIA_FONT = createSkiaFont()
+const SKIA_PAINT = createSkiaLandmarkPaint();
+
 // Function to calculate angles between three points
-// TODO: Utilize 3D angles
 export function calculateAngle(a, b, c) {
 	'worklet';
 	if (a == undefined || b == undefined || c == undefined)
@@ -40,7 +44,7 @@ export function computeAngles(landmarks) {
 	return angles;
 }
 
-// Remove unnecessary landmarks from our data
+// Function to remove unnecessary landmarks from our data
 export function computeLandmarks(data) {
     'worklet'
     let landmarks = data;
@@ -69,32 +73,76 @@ export function computeLandmarks(data) {
     return landmarks;
 }
 
-function drawLandmarkLine(frame, landmarks_dict, l0, l1) {
-	'worklet';
-	if (Object.keys(landmarks_dict).length === 0) return;
+// Function to create the font for angle text on screen
+function createSkiaFont() {
+	const fontFamily = Platform.select({ ios: "Helvetica", default: "serif" });
+	const fontStyle = {
+		fontFamily,
+		fontSize: 54,
+		fontStyle: "normal",
+		fontWeight: "bold",
+	};
+	return matchFont(fontStyle);
+}
 
-	// Frame Dimensions
-	let frameWidth = frame.width;
-	let frameHeight = frame.height;
-	// console.log(`Frame ${frameWidth} x ${frameHeight}`)
-
-	// Landmark Coordinates
-	let x0 = landmarks_dict[l0]['x']// * Number(frameWidth);
-	let y0 = landmarks_dict[l0]['y']// * Number(frameHeight);
-	let x1 = landmarks_dict[l1]['x']// * Number(frameWidth);
-	let y1 = landmarks_dict[l1]['y']// * Number(frameHeight);
-
-	// Line Style
-	let paint = Skia.Paint();
+// Function to create the paint color and style for landmarks and skeleton
+function createSkiaLandmarkPaint() {
+	const paint = Skia.Paint();
 	paint.setStyle(PaintStyle.Fill);
 	paint.setStrokeWidth(2);
 	paint.setColor(Skia.Color('pink'));
-
-	// Draw
-	frame.drawLine(x0, y0, x1, y1, paint);
-	// console.log(`Drawing line at (${x0}, ${y0}) | (${x1}, ${y1})`)
+	return paint;
 }
 
+// Function to draw the joint angles on screen
+export function drawAngles(frame, angles_dict, landmarks_dict) {
+	'worklet'
+	for (const [landmark, angle] of Object.entries(angles_dict)) {
+		// Ignore erroneous angles
+		if (angle == undefined || angle < 0 || angle > 360)
+			continue;
+
+		// Define basic variables
+		let x = landmarks_dict[landmark]['x'];
+		let y = landmarks_dict[landmark]['y'];
+		let text = parseInt(angle) + "°";
+		let textPaint = Skia.Paint();
+		textPaint.setColor(Skia.Color('white'));
+
+		// Rotate frame for up-straight view
+		frame.save();
+		frame.rotate(270, x, y);
+
+		// Draw and restore the original frame
+		frame.drawText(text, x, y, textPaint, SKIA_FONT);
+		frame.restore();
+	}
+}
+
+// Function to draw a circle for every landmark/joint on screen
+export function drawLandmarkPoints(frame, landmarks_dict) {
+	'worklet'
+	for (const landmark in landmarks_dict) {
+		let l = landmarks_dict[landmark];
+		frame.drawCircle(l['x'], l['y'], 6, SKIA_PAINT);
+	}
+}
+
+// Function to draw a line between two landmarks
+function drawLandmarkLine(frame, landmarks_dict, l0, l1) {
+	'worklet';
+	if (Object.keys(landmarks_dict).length === 0) return;
+	// Landmark Coordinates
+	let x0 = landmarks_dict[l0]['x'];
+	let y0 = landmarks_dict[l0]['y'];
+	let x1 = landmarks_dict[l1]['x'];
+	let y1 = landmarks_dict[l1]['y'];
+
+	// Draw
+	frame.drawLine(x0, y0, x1, y1, SKIA_PAINT);
+}
+
+// Function to draw the user's skeleton/pose based on the landmarks
 export function drawSkeleton(frame, landmarks_dict) {
 	'worklet';
 	drawLandmarkLine(frame, landmarks_dict, "LeftWrist", "LeftElbow");
