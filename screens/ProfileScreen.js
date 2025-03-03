@@ -76,6 +76,7 @@ const ProfileScreen = ({ navigation }) => {
             <Text style={styles.text}>Insert logic to see session history here!</Text>
             <View style={styles.space}></View>
             <Ionicons.Button name="settings" size={32} onPress={() => navigation.navigate("Settings")}></Ionicons.Button>
+            <Ionicons.Button name="info" size={32} onPress={() => navigation.navigate("TestGPT")}></Ionicons.Button>
             <View style={styles.listContainer}>
                 <FlatList
                     data={sessions}
