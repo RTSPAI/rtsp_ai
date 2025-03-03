@@ -31,6 +31,21 @@ function pullup(landmarks_dict, angles_dict, flags_dict, currentStage, currentRe
             currentRep.value += 1;
         }
     }
+
+    // Analyze exercise flags based on user's posture
+    // Elbow Angle Flag
+    if (!Object.keys(flags_dict.value).includes("ElbowsFlag")) {
+        flags_dict.value["ElbowsFlag"] = {"count": 100000, "message": "Make sure to fully extend your arms at the end of the repetition", "max_angle": 0};
+    }
+    if (currentStage.value === "up") {
+        const currMax = flags_dict.value["ElbowsFlag"]["max_angle"];
+        const highestElbowAngle = Math.max(angles_dict["LeftElbow"], angles_dict["RightElbow"]);
+        flags_dict.value["ElbowsFlag"]["max_angle"] = Math.max(currMax, highestElbowAngle);
+
+        if (flags_dict.value["ElbowsFlag"]["max_angle"] > 160) { 
+            flags_dict.value["ElbowsFlag"]["count"] = 0;
+        }
+    }
 }
 
 // Function to detect if a push-up has been completed and return the updated stage
@@ -70,9 +85,6 @@ function pushup(landmarks_dict, angles_dict, flags_dict, currentStage, currentRe
         }
         flags_dict.value["HipsFlag"]["count"] += 1;
     }
-
-    // Shoulder Position Flag
-    // TODO: ...
 
     // Knee Angle Flag
     if (angles_dict["LeftKnee"] < 150 || angles_dict["RightKnee"] < 150) {
