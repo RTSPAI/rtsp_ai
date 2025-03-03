@@ -87,7 +87,7 @@ const CameraScreen = ({ route, navigation }) => {
         frame.render();
 
         // Perform analysis on the current exercise based on angles and repetition stage
-        exerciseAnalysis(exercise, angles_dict, repStage, repCount);
+        exerciseAnalysis(exercise, landmarks_dict, angles_dict, repStage, repCount);
 
         // Trigger UI update
         updateReps(repCount.value);

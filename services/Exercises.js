@@ -5,11 +5,14 @@
 // TODO: posture based on angles (overextending, incorrect form in other parts, etc)
 
 // Function to detect if a pull-up has been completed and return the updated stage
-function pullup(angles_dict, currentStage, currentRep) {
+function pullup(landmarks_dict, angles_dict, currentStage, currentRep) {
     'worklet';
     // Define required angles and thresholds
     const leftElbowAngle = angles_dict['LeftElbow'];
     const rightElbowAngle = angles_dict['RightElbow'];
+
+    if (landmarks_dict["LeftElbow"]['confidence'] < .5 && landmarks_dict["RightElbow"]['confidence'] < .5 )
+        return;
 
     // Elbow thresholds
     const E_LOW = 90;
@@ -31,7 +34,7 @@ function pullup(angles_dict, currentStage, currentRep) {
 }
 
 // Function to detect if a push-up has been completed and return the updated stage
-function pushup(angles_dict, currentStage, currentRep) {
+function pushup(landmarks_dict, angles_dict, currentStage, currentRep) {
     'worklet';
     // Define required angles and thresholds
     const leftElbowAngle = angles_dict['LeftElbow'];
@@ -40,6 +43,10 @@ function pushup(angles_dict, currentStage, currentRep) {
     // Elbow thresholds
     const E_LOW = 90;
     const E_HIGH = 130
+
+    if (landmarks_dict["LeftElbow"]['confidence'] < .5 && landmarks_dict["RightElbow"]['confidence'] < .5 )
+        return;
+
 
     // 90 degrees is the current threshold to see if someone went down
     // 130 degrees is the current threshold to see if someone comes back up
@@ -57,11 +64,14 @@ function pushup(angles_dict, currentStage, currentRep) {
 }
 
 // Function to detect if a squat has been completed and return the updated stage
-function squat(angles_dict, currentStage, currentRep) {
+function squat(landmarks_dict, angles_dict, currentStage, currentRep) {
     'worklet';
     // Define required angles and thresholds
     const leftKneeAngle = angles_dict['LeftKnee'];
     const rightKneeAngle = angles_dict['RightKnee'];
+
+    if (landmarks_dict["LeftKnee"]['confidence'] < .5 && landmarks_dict["RightKnee"]['confidence'] < .5 )
+        return;
 
     // Knee thresholds
     const K_LOW = 100
@@ -82,14 +92,16 @@ function squat(angles_dict, currentStage, currentRep) {
     }
 }
 
-export function exerciseAnalysis(exercise, angles_dict, repStage, repCount) {
+export function exerciseAnalysis(exercise, landmarks_dict, angles_dict, repStage, repCount) {
     'worklet'
+
+    if (Object.keys(landmarks_dict).length === 0) return;
     // Call exercise function and increment the repCount based on angles and repStage value
     if (exercise === "Pull Ups") {
-        pullup(angles_dict, repStage, repCount);
+        pullup(landmarks_dict, angles_dict, repStage, repCount);
     } else if (exercise === "Push Ups") {
-        pushup(angles_dict, repStage, repCount);
+        pushup(landmarks_dict, angles_dict, repStage, repCount);
     } else if (exercise === "Squats") {
-        squat(angles_dict, repStage, repCount);
+        squat(landmarks_dict, angles_dict, repStage, repCount);
     }
 }
