@@ -81,7 +81,6 @@ const ProfileScreen = ({ navigation }) => {
             <TouchableOpacity style={styles.profileButton} onPress={() => navigation.navigate('Settings')}>
                 <Text style={styles.profileButtonText}>Settings</Text>
             </TouchableOpacity>
-            <Ionicons.Button name="info" size={32} onPress={() => navigation.navigate("TestGPT")}></Ionicons.Button>
             <View style={styles.listContainer}>
                 <FlatList
                     data={sessions}

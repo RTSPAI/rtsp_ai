@@ -60,6 +60,8 @@ const ProfileScreen = ({ navigation }) => {
         return null;
     }
 
+    //<Ionicons.Button name="info" size={32} onPress={() => navigation.navigate("TestGPT")}></Ionicons.Button>
+    
 
     return (
         <View style={styles.container}>
