@@ -38,7 +38,7 @@ const SettingsScreen = ({ navigation }) => {
 
     return (
         <View style={styles.container}>
-            <Text style={styles.text}>Insert settings logic here!</Text>
+            <Text style={styles.text}> Insert settings logic here!</Text>
             <Button style={styles.warningText} title="Log Out" onPress={logOut} />
             <DeleteAccountButton />
         </View>
