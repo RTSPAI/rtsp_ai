@@ -35,7 +35,7 @@ const ProfileScreen = ({ navigation }) => {
         const chatCompletion = httpsCallable(functions, "chatCompletion");
         try {
             const data = {
-                prompt: "When I run on roads and sidewalks, my hips are really tight. What should I do?"
+                prompt: "say hi to me"
             }
             setFetching(true);
             const result = await chatCompletion(data);

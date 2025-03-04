@@ -23,7 +23,10 @@ initializeApp();
 
 
 export const chatCompletion = onCall({ secrets: [OPENAI_API_KEY] }, async (data, context) => {
-  const prompt  = data.prompt;
+  const prompt  = data.data.prompt;
+  //console.log("Prompt: ", prompt);
+  //console.log(data.data);
+  //console.log(data);
   const aiModel = "gpt-4o-mini";
   const messages = [
         { 
@@ -32,7 +35,7 @@ export const chatCompletion = onCall({ secrets: [OPENAI_API_KEY] }, async (data,
         },                
         {
             role: "user",
-            content: "When I run on roads and sidewalks, my hips are really tight. What should I do?"
+            content: prompt
         }
   ]
 
