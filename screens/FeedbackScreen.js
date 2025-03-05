@@ -36,9 +36,9 @@ const FeedbackScreen = ({ route, navigation }) => {
             {/* Session Details */}
             <View style={styles.sessionContainer}>
                 <Text style={styles.sectionTitle}>Session Details</Text>
-                <Text style={styles.sessionText}>🛠️ Exercise: {session.exercise}</Text>
-                <Text style={styles.sessionText}>⏳ Duration: {session.duration} sec</Text>
-                <Text style={styles.sessionText}>📅 Created At: {session.createdAt}</Text>
+                <Text style={styles.sessionText}> Exercise: {session.exercise}</Text>
+                <Text style={styles.sessionText}> Duration: {session.duration} sec</Text>
+                <Text style={styles.sessionText}> Created At: {session.createdAt}</Text>
             </View>
 
             {/* Feedback List */}
@@ -83,13 +83,12 @@ const styles = StyleSheet.create({
             height: 6,
         },
         shadowOpacity: 0.1,
-
     },
     sectionTitle: {
         fontSize: 18,
         fontWeight: 'bold',
         color: '#333',
-        marginBottom: height * 0.0,
+        marginBottom: height * 0.01,
     },
     sessionText: {
         fontSize: 16,
