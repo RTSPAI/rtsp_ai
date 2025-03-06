@@ -40,6 +40,8 @@ export function computeAngles(landmarks) {
 	angles["RightKnee"] = calculateAngle(landmarks["RightHip"], landmarks["RightKnee"], landmarks["RightAnkle"]);
 	angles["LeftHip"] = calculateAngle(landmarks["LeftShoulder"], landmarks["LeftHip"], landmarks["LeftKnee"]);
 	angles["RightHip"] = calculateAngle(landmarks["RightShoulder"], landmarks["RightHip"], landmarks["RightKnee"]);
+	angles["LeftShoulder"] = calculateAngle(landmarks["LeftElbow"], landmarks["LeftShoulder"], landmarks["LeftHip"]);
+	angles["RightShoulder"] = calculateAngle(landmarks["RightElbow"], landmarks["RightShoulder"], landmarks["RightHip"]);
 
 	return angles;
 }
