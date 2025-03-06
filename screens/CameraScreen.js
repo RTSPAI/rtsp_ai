@@ -6,7 +6,7 @@ import { Camera, useCameraDevice, useCameraPermission, useSkiaFrameProcessor, Vi
 import { useIsFocused } from '@react-navigation/native';
 import { useAppState } from '@react-native-community/hooks';
 import { computeAngles, computeLandmarks, drawAngles, drawLandmarkPoints, drawSkeleton } from '../services/PoseDetection';
-import { exerciseAnalysis } from '../services/Exercises';
+import { getTriggeredFlags, exerciseAnalysis } from '../services/Exercises';
 import { useRunOnJS } from 'react-native-worklets-core';
 import { useSharedValue } from 'react-native-reanimated';
 import FontIcon from 'react-native-vector-icons/FontAwesome';
@@ -49,15 +49,20 @@ const CameraScreen = ({ route, navigation }) => {
     const [showAngles, setShowAngles] = useState(true);
     const [repetitionCount, setRepetitions] = useState(0);
 
-    // Use Shared Variable for repCount and repStage for easy access
+    // Use Shared Values for repCount and repStage for easy access
     const repCount = useSharedValue(0);
     const repStage = useSharedValue("up");
 
-    // Use Shared Variable for flag counting
+    // Use Shared Values for flag counting
     const flags_dict = useSharedValue({});
 
+    // Use Shared Values for storing flags and model feedback
+    const angles_seen = useSharedValue([]);
+    const feedback_seen = useSharedValue([]);
+    const flags_seen = useSharedValue([]);
+
     // Function to update the useState of repetition count for the container
-    const updateReps = useRunOnJS((reps, flags) => {
+    const updateReps = useRunOnJS((reps, flags, angles) => {
         // Exit if no change to repetition count
         if (reps <= repCount.value)
             return;
@@ -66,8 +71,17 @@ const CameraScreen = ({ route, navigation }) => {
         repCount.value = reps;
         setRepetitions(reps);
 
-        // Display exercise flags and clear
-        console.log("Flags:", flags.value);
+        // Store flags that passed the threshold
+        const valid_flags = getTriggeredFlags(flags.value);
+        const all_flags = [...flags_seen.value, valid_flags];
+        // Update in the background
+        flags_seen.value = all_flags;
+
+        // TODO: Run Gabby's model here and store feedback in `feedback_seen`
+        // TODO: ...
+
+        // Reset Shared Values
+        angles.value = [];
         flags.value = {};
     });
 
@@ -101,8 +115,11 @@ const CameraScreen = ({ route, navigation }) => {
         // Perform analysis on the current exercise based on angles and repetition stage
         exerciseAnalysis(exercise, landmarks_dict, angles_dict, flags_dict, repStage, repCount);
 
-        // Trigger UI update
-        updateReps(repCount.value, flags_dict);
+        // Store angle data for feedback later
+        angles_seen.value = [...angles_seen.value, angles_dict]
+
+        // Trigger UI update and feedback processing
+        updateReps(repCount.value, flags_dict, angles_seen);
 
         // Draw skeleton and landmarks
         if (showLandmarks) {

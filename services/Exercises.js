@@ -1,8 +1,20 @@
 // TODO: Improve complexity of each exercise to take into account multiple angles.
 // TODO: At the same time, ensure that there is some leniency if some angles are not found.
 
-// TODO: Implement "FLAGS" functionality to call out user mistakes, such as incorrect
-// TODO: posture based on angles (overextending, incorrect form in other parts, etc)
+const FLAGS_THRESHOLD = 70;
+
+// Function to return flag messages that exceed the determined threshold
+export function getTriggeredFlags(flags_dict) {
+    'worklet';
+    let valid_flags = [];
+    Object.keys(flags_dict).forEach(flag => {
+        let f = flags_dict[flag];
+        if (f["count"] > FLAGS_THRESHOLD) {
+            valid_flags.push(f["message"]);
+        }
+    });
+    return valid_flags;
+}
 
 // Function to detect if a pull-up has been completed and return the updated stage
 function pullup(landmarks_dict, angles_dict, flags_dict, currentStage, currentRep) {
