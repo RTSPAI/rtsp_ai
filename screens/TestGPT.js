@@ -2,19 +2,7 @@
 
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, Button } from 'react-native';
-import { generatePrompt, requestAIFeedback } from '../services/OpenAI';
-
-/*
-//The Cloud functions for Firebase SDK to create Cloud Functions and triggers
-const {logger} = require('firebase-functions');
-const {onRequest} = require('firebase-functions/v2/https');
-const {onDocumentCreated} = require('firebase-functions/v2/firestore');
-
-//The Firebase Admin SDK to access Firestore
-const {initializeApp} = require('firebase-admin/app');
-const {getFirestore} = require('firebase-admin/firestore');
-*/
-
+import { createSessionObject, generatePrompt, requestAIFeedback, saveExerciseSession } from '../services/OpenAI';
 
 const TestGPT = ({ navigation }) => {
     const [output, setOutput] = useState('');
@@ -32,11 +20,22 @@ const TestGPT = ({ navigation }) => {
     // Function to request feedback on button click
     const handleSubmit = async () => {
         try {
+            // Query OpenAI feedback
             setFetching(true);
             const prompt = generatePrompt(exercise, flags, modelFeedback);
             const response = await requestAIFeedback(prompt);
             console.log(response);
             setOutput(response);
+
+            // Create session object
+            const userId = "F8GheDktjVNlWpRDXtiFIy5e0Wh1"; // maxbagatini@hotmail.com account
+            const session = createSessionObject(exercise);
+            session.duration = 45;
+            session.feedback = response;
+            session.repetitions = 3;
+
+            // Write session data to DB
+            saveExerciseSession(userId, session);
         } catch (error) {
             console.log(error);
         } finally {

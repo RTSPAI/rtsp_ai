@@ -1,7 +1,14 @@
-// TODO: Implement functions to save data to Firebase Realtime DB.
-
-import { FIREBASE_FUNC } from '../firebaseConfig';
+import { FIREBASE_FUNC, FIREBASE_DB } from '../firebaseConfig';
 import { httpsCallable } from 'firebase/functions';
+import { ref, push } from 'firebase/database';
+
+// Function to create starting session object. Note: Needs to be updated after exercise is done.
+export const createSessionObject = (exercise) => {
+    return { 
+        createdAt: Date.now(), duration: -1, exercise: exercise,
+        feedback: "", repetitions: -1
+    };
+}
 
 // Function to generate text prompt for OpenAI based on repetition flags and injury model feedback
 export const generatePrompt = (exercise, repFlags, modelFeedback) => {
@@ -44,6 +51,20 @@ export const requestAIFeedback = async (prompt) => {
         return result.data.aiResponse;
     } catch (error) {
         console.log(error);
-        return error
+        return error;
+    }
+}
+
+// Function to write session object to user's DB
+export const saveExerciseSession = async (userId, session) => {
+    // Define reference to user's sessions field
+    const sessionsRef = ref(FIREBASE_DB, `users/${userId}/sessions`);
+    try {
+        // Write session object to DB
+        const response = await push(sessionsRef, session);
+        return true;
+    } catch (error) {
+        console.log("Error adding session:", error);
+        return false;
     }
 }
