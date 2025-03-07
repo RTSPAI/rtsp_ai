@@ -15,7 +15,6 @@ import { AuthProvider } from './context/AuthContext';
 const Stack = createNativeStackNavigator();
 const showAllHeaders = true;
 
-// TODO: Investigate issues with navigation.
 function RootStack() {
 	return (
 		<Stack.Navigator initialRouteName="Login">
