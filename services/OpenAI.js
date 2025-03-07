@@ -1,0 +1,49 @@
+// TODO: Implement functions to save data to Firebase Realtime DB.
+
+import { FIREBASE_FUNC } from '../firebaseConfig';
+import { httpsCallable } from 'firebase/functions';
+
+// Function to generate text prompt for OpenAI based on repetition flags and injury model feedback
+export const generatePrompt = (exercise, repFlags, modelFeedback) => {
+    // Throw error if inconsistent data
+    if (repFlags.length != modelFeedback.length) {
+        throw new Error("repFlags and modelFeedback arrays must be the same length.");
+    }
+
+    // Create start of prompt with instructions and warnings
+    let prompt = `Generate feedback for the repetitions I completed when performing ${exercise}.\n`;
+    prompt += "Be concise and clear. Do not repeat the same information and don't include markdown.\n";
+    prompt += "After including the feedback for each repetition, include a final small summary. ";
+
+    // For every repetition
+    for (let i = 0; i < repFlags.length; i++) {
+        // Append title, risk, and quality
+        // TODO: Change the order (if needed) after model output is verified
+        let injuryFeedback = modelFeedback[i];
+        const [risk, quality] = injuryFeedback;
+        prompt += `Repetition #${i + 1} | Risk: ${risk} | Pre-Determined Quality: ${quality}\n`;
+        prompt += "Mistakes through the repetition:\n";
+        // Append the flags to the prompt
+        const flags = repFlags[i];
+        if (flags.length === 0)
+            prompt += "- None";
+        for (const flag of flags) {
+            prompt += `- ${flag}\n`;
+        }
+    }
+
+    return prompt;
+}
+
+// Function to send an OpenAI request with the specified prompt and return the response
+export const requestAIFeedback = async (prompt) => {
+    const chatCompletion = httpsCallable(FIREBASE_FUNC, "chatCompletion");
+    try {
+        const data = { prompt };
+        const result = await chatCompletion(data);
+        return result.data.aiResponse;
+    } catch (error) {
+        console.log(error);
+        return error
+    }
+}

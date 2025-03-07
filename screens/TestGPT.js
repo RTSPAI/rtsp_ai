@@ -1,11 +1,8 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, FlatList, Pressable, Button } from 'react-native';
-import { FIREBASE_AUTH, FIREBASE_DB } from '../firebaseConfig';
-import { ref, get, query, orderByChild } from 'firebase/database';
-import { useAuthContext, resetScreens } from '../context/AuthContext';
-import Ionicons from '@expo/vector-icons/Ionicons';
+//** PLEASE NOTE: THIS IS ONLY A PLAYGROUND. Code needs to be migrated to CameraScreen.js when done.
 
-import { getFunctions, httpsCallable } from 'firebase/functions';
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, Button } from 'react-native';
+import { generatePrompt, requestAIFeedback } from '../services/OpenAI';
 
 /*
 //The Cloud functions for Firebase SDK to create Cloud Functions and triggers
@@ -19,60 +16,47 @@ const {getFirestore} = require('firebase-admin/firestore');
 */
 
 
+const TestGPT = ({ navigation }) => {
+    const [output, setOutput] = useState('');
+    const [fetching, setFetching] = useState(false);
 
-const ProfileScreen = ({ navigation }) => {
-    const { user, loadingUser } = useAuthContext();
-    const [loading, setLoading] = useState(false);
-    const [sessions, setSessions] = useState(null);
-    const auth = FIREBASE_AUTH;
+    // Define fake data for testing
+    const exercise = "Push Ups"
+    const flags = [
+        ["Make sure to keep your knees straight", "Make sure to keep your hips straight"],
+        ["Make sure to keep your hips straight"],
+        []
+    ]
+    const modelFeedback = [["At Risk", "Poor"], ["Not At Risk", "Good"], ["Not At Risk", "Excellent"]]
 
-    const [ prompt, setPrompt ] = useState('');
-    const [ output, setOutput ] = useState('');
-    const [ fetching, setFetching ] = useState(false);
-
+    // Function to request feedback on button click
     const handleSubmit = async () => {
-        const functions = getFunctions();
-        const chatCompletion = httpsCallable(functions, "chatCompletion");
         try {
-            const data = {
-                prompt: "say hi to me"
-            }
             setFetching(true);
-            const result = await chatCompletion(data);
-            console.log(result.data.aiResponse);
-            console.log(result);
-            setOutput(result.data.aiResponse);
-
-        } catch ( error ) {
+            const prompt = generatePrompt(exercise, flags, modelFeedback);
+            const response = await requestAIFeedback(prompt);
+            console.log(response);
+            setOutput(response);
+        } catch (error) {
             console.log(error);
         } finally {
             setFetching(false);
         }
     }
 
-    // After rending, verify is user is signed in
-    useEffect(() => {
-        resetScreens(user, loadingUser, navigation);
-    }, [user, loadingUser, navigation]);
-
-    // If loading or user not present, render nothing
-    if (loadingUser || !user) {
-        return null;
-    }
-
-    //<Ionicons.Button name="info" size={32} onPress={() => navigation.navigate("TestGPT")}></Ionicons.Button>
-    
-
     return (
         <View style={styles.container}>
-           <Button
-             disabled={fetching}
-             onPress={handleSubmit}
-             title={fetching ? "Fetching AI Response..." : "Submit Prompt"}
-           />
-           <Text>
-            {output}
-           </Text>
+            <Text style={styles.small}>
+                {generatePrompt(exercise, flags, modelFeedback)}
+            </Text>
+            <Button
+                disabled={fetching}
+                onPress={handleSubmit}
+                title={fetching ? "Fetching AI Response..." : "Submit Prompt"}
+            />
+            <Text style={styles.small}>
+                {output}
+            </Text>
         </View>
     );
 };
@@ -83,37 +67,9 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
     },
-    congratsText: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        color: 'green',
-    },
-    text: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        color: 'black',
-    },
-    space: {
-        height: 20,
-        width: 20,
-    },
-    listContainer: {
-        marginTop: 30,
-        padding: 2,
-        backgroundColor: "#555555",
-        height: 400,
-        width: 300,
-    },
-    item: {
-        backgroundColor: "#f5f520",
-        padding: 15,
-        marginVertical: 8,
-        borderRadius: 8,
-    },
-    title: {
-        fontSize: 18,
-        fontWeight: "bold",
+    small: {
+        fontSize: 9,
     },
 });
 
-export default ProfileScreen;
+export default TestGPT;
