@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { FIREBASE_AUTH } from '../firebaseConfig';
 import { useAuthContext, resetScreens } from '../context/AuthContext';
 import { Camera, useCameraDevice, useCameraPermission, useSkiaFrameProcessor, VisionCameraProxy } from 'react-native-vision-camera';
@@ -138,8 +138,11 @@ const CameraScreen = ({ route, navigation }) => {
         // Set isLoading to true to stop Frame Processor and display loading symbol
         setIsLoading(true);
 
-        // TODO: Display loading icon here
-        // TODO: ...
+        // If no reps completed, navigate back to home screen.
+        if (repCount.value <= 0) {
+            navigation.pop();
+            return;
+        }
 
         try {
             // Query OpenAI feedback
@@ -151,6 +154,12 @@ const CameraScreen = ({ route, navigation }) => {
             }
             const prompt = generatePrompt(exercise, flags, modelFeedback);
             const response = await requestAIFeedback(prompt);
+
+            console.log("---------------------------------------------------------------------PROMPT");
+            console.log(prompt);
+            console.log("---------------------------------------------------------------------RESPONSE");
+            console.log(response);
+            console.log("-----------------------------------------------------------------------------");
 
             // Create session object
             const userId = user.uid;
@@ -224,6 +233,12 @@ const CameraScreen = ({ route, navigation }) => {
             ) : (
                 <Text style={styles.text}>No camera permissions given.</Text>
             )}
+            {isLoading && (
+                <View style={styles.loadingContainer}>
+                    <ActivityIndicator size="large" color="#666666" />
+                    <Text style={styles.loadingText}>Loading...</Text>
+                </View>
+            )}
         </View>
     );
 };
@@ -284,6 +299,23 @@ const styles = StyleSheet.create({
         fontSize: 18,
         fontWeight: 'bold',
     },
+    loadingContainer: {
+        position: 'absolute',
+        top: 0,
+        bottom: 0,
+        left: 0,
+        right: 0,
+        backgroundColor: 'rgba(0, 0, 0, 0.7)', // Semi-transparent overlay
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    loadingText: {
+        marginTop: 10,
+        color: '#fff',
+        fontSize: 18,
+        fontWeight: 'bold',
+    },
+    
 });
 
 export default CameraScreen;

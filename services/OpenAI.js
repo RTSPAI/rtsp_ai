@@ -24,7 +24,8 @@ export const generatePrompt = (exercise, repFlags, modelFeedback) => {
     prompt += "After including the feedback for each repetition, include a final small summary.\n";
     prompt += "For example, follow this format:\n";
     prompt += "Repetition #i: <feedback>\n";
-    prompt += "Summary: <summary feedback>\n";
+    prompt += "Summary: <summary feedback>\n\n";
+    prompt += "Below are what happened at each repetition:\n"
 
     // For every repetition
     for (let i = 0; i < repFlags.length; i++) {
@@ -42,6 +43,9 @@ export const generatePrompt = (exercise, repFlags, modelFeedback) => {
             prompt += `- ${flag}\n`;
         }
     }
+
+    // Attempt to stop hallucinations and misinformation
+    prompt += "\nNote: Be careful not to hallucinate and make up fake statements, such as grip strength or things not measured."
 
     return prompt;
 }
