@@ -30,6 +30,7 @@ const CameraScreen = ({ route, navigation }) => {
     const { exercise } = route.params;
     const { user, loadingUser } = useAuthContext();
     const [ isLoading, setIsLoading] = useState(false);
+    const startTime = Date.now();
     const auth = FIREBASE_AUTH;
 
     // Camera utilization
@@ -158,8 +159,7 @@ const CameraScreen = ({ route, navigation }) => {
             // Create session object
             const userId = user.uid;
             const session = createSessionObject(exercise);
-            // TODO: Keep track of session duration
-            session.duration = -1;
+            session.duration = ((Date.now() - startTime) / 1000).toFixed(1);
             session.feedback = response;
             session.repetitions = repCount.value;
 
