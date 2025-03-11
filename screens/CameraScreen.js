@@ -155,12 +155,6 @@ const CameraScreen = ({ route, navigation }) => {
             const prompt = generatePrompt(exercise, flags, modelFeedback);
             const response = await requestAIFeedback(prompt);
 
-            console.log("---------------------------------------------------------------------PROMPT");
-            console.log(prompt);
-            console.log("---------------------------------------------------------------------RESPONSE");
-            console.log(response);
-            console.log("-----------------------------------------------------------------------------");
-
             // Create session object
             const userId = user.uid;
             const session = createSessionObject(exercise);

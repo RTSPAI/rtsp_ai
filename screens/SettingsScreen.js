@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, Button, Alert } from 'react-native';
+import { View, Text, StyleSheet, Alert, TouchableOpacity } from 'react-native';
 import DeleteAccountButton from '../components/DeleteAccountButton';
 import { FIREBASE_AUTH } from '../firebaseConfig';
 import { signOut } from "firebase/auth";
@@ -10,7 +10,7 @@ const SettingsScreen = ({ navigation }) => {
     const [loading, setLoading] = useState(false);
     const auth = FIREBASE_AUTH;
 
-    // After rending, verify is user is signed in
+    // After rendering, verify if user is signed in
     useEffect(() => {
         resetScreens(user, loadingUser, navigation);
     }, [user, loadingUser, navigation]);
@@ -26,21 +26,22 @@ const SettingsScreen = ({ navigation }) => {
         try {
             await signOut(auth);
         } catch (error) {
-            const errorCode = error.code;
-            const errorMessage = error.message;
-            console.log(`${errorCode} | ${errorMessage}`);
-            // Optionally, show an alert with the error
-            Alert.alert('Log Out Error', errorMessage);
+            console.log(`${error.code} | ${error.message}`);
+            Alert.alert('Log Out Error', error.message);
         } finally {
             setLoading(false);
         }
-    }
+    };
 
     return (
         <View style={styles.container}>
-            <Text style={styles.text}> Insert settings logic here!</Text>
-            <Button style={styles.warningText} title="Log Out" onPress={logOut} />
-            <DeleteAccountButton />
+            <Text style={styles.text}>Manage Account Preferences</Text>
+            <View style={styles.buttonContainer}>
+                <TouchableOpacity style={styles.button} onPress={logOut} disabled={loading}>
+                    <Text style={styles.buttonText}>Log Out</Text>
+                </TouchableOpacity>
+                <DeleteAccountButton />
+            </View>
         </View>
     );
 };
@@ -48,19 +49,36 @@ const SettingsScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        backgroundColor: '#E4E4E4',
         justifyContent: 'center',
         alignItems: 'center',
+        paddingHorizontal: 20,
     },
     text: {
         fontSize: 24,
         fontWeight: 'bold',
         color: 'black',
+        marginBottom: 30,
     },
-    warningText: {
-        fontSize: 16,
+    buttonContainer: {
+        width: '100%',
+        alignItems: 'center',
+    },
+    button: {
+        backgroundColor: '#ccc', // Neutral color instead of red
+        paddingVertical: 15,
+        paddingHorizontal: 30,
+        borderRadius: 10,
+        marginVertical: 10,
+        width: 200,
+        alignItems: 'center',
+    },
+    buttonText: {
+        fontSize: 18,
         fontWeight: 'bold',
-        color: 'red',
+        color: 'black',
     }
 });
 
 export default SettingsScreen;
+

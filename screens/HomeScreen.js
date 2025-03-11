@@ -53,7 +53,7 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
   subtitle: {
-    fontSize: 16,
+    fontSize: 19,
     color: '#666',
     marginBottom: 20,
     textAlign: 'center',
@@ -74,4 +74,3 @@ const styles = StyleSheet.create({
 });
 
 export default HomeScreen;
-

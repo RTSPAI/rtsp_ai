@@ -150,9 +150,6 @@ const styles = StyleSheet.create({
         marginRight: 12,
         overflow: "hidden",
     },
-    icon: {
-        fontSize: 20,
-    },
     itemText: {
         fontSize: 16,
         fontWeight: "600",

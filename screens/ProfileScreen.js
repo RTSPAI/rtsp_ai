@@ -60,12 +60,18 @@ const ProfileScreen = ({ navigation }) => {
         navigation.navigate("Feedback", { session });
     }
 
+    // Converts epoch time to readable format
+    const epochToDate = (epochTime) =>{
+        const date = new Date(epochTime);
+        return date.toLocaleString();
+    }
+
     const Item = ({ session }) => (
         <Pressable style={styles.item} onPress={() => onPress(session)}>
             <Text style={styles.sessionTitle}>{session.exercise}</Text>
             <Text>Repetitions: {session.repetitions}</Text>
             <Text>Duration: {session.duration} sec</Text>
-            <Text>Created At: {session.createdAt}</Text>
+            <Text>Created At: {epochToDate(session.createdAt)}</Text>
         </Pressable>
     );
 
@@ -76,8 +82,8 @@ const ProfileScreen = ({ navigation }) => {
             <Text style={styles.title}>Welcome, {getFirstName(user.displayName)}</Text>
             <Text style={styles.subtitle}>View your session history below.</Text>
 
-            <TouchableOpacity style={styles.profileButton} onPress={() => navigation.navigate('Settings')}>
-                <Text style={styles.profileButtonText}>Settings</Text>
+            <TouchableOpacity style={styles.settingsButton} onPress={() => navigation.navigate('Settings')}>
+                <Text style={styles.settingsButtonText}>Settings</Text>
             </TouchableOpacity>
             <View style={styles.listContainer}>
                 <FlatList
@@ -99,26 +105,26 @@ const styles = StyleSheet.create({
         paddingTop: 20,
     },
     title: {
-        fontSize: 24,
+        fontSize: 30,
         fontWeight: 'bold',
         color: '#333',
         marginBottom: 5,
     },
     subtitle: {
-        fontSize: 16,
+        fontSize: 19,
         color: '#666',
         marginBottom: 10,
         textAlign: 'center',
         paddingHorizontal: 20,
     },
-    profileButton: {
+    settingsButton: {
         backgroundColor: '#6D8E93',
         paddingVertical: 12,
         paddingHorizontal: 24,
         borderRadius: 10,
         marginBottom: 20,
     },
-    profileButtonText: {
+    settingsButtonText: {
         color: '#FFF',
         fontSize: 16,
         fontWeight: 'bold',
@@ -132,7 +138,7 @@ const styles = StyleSheet.create({
         maxHeight: 400,
     },
     item: {
-        backgroundColor: '#f9c74f',
+        backgroundColor: '#E4E4E4',
         padding: 15,
         marginVertical: 8,
         borderRadius: 8,
