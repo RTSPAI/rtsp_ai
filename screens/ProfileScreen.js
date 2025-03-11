@@ -62,12 +62,18 @@ const ProfileScreen = ({ navigation }) => {
         navigation.navigate("Feedback", { session });
     }
 
+    // Converts epoch time to readable format
+    const epochToDate = (epochTime) =>{
+        const date = new Date(epochTime);
+        return date.toLocaleString();
+    }
+
     const Item = ({ session }) => (
         <Pressable style={styles.item} onPress={() => onPress(session)}>
             <Text style={styles.sessionTitle}>{session.exercise}</Text>
             <Text>Repetitions: {session.repetitions}</Text>
             <Text>Duration: {session.duration} sec</Text>
-            <Text>Created At: {session.createdAt}</Text>
+            <Text>Created At: {epochToDate(session.createdAt)}</Text>
         </Pressable>
     );
 
@@ -102,13 +108,13 @@ const styles = StyleSheet.create({
         paddingTop: 20,
     },
     title: {
-        fontSize: 24,
+        fontSize: 30,
         fontWeight: 'bold',
         color: '#333',
         marginBottom: 5,
     },
     subtitle: {
-        fontSize: 16,
+        fontSize: 19,
         color: '#666',
         marginBottom: 10,
         textAlign: 'center',
