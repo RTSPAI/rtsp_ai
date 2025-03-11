@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, FlatList, SafeAreaView, Dimensions } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, SafeAreaView, Dimensions } from 'react-native';
 import { FIREBASE_AUTH } from '../firebaseConfig';
 import { useAuthContext, resetScreens } from '../context/AuthContext';
 
@@ -18,13 +18,22 @@ const FeedbackScreen = ({ route, navigation }) => {
         return null;
     }
 
-    const Item = ({ feedback }) => (
-        <View style={styles.item}>
-            <Text style={styles.feedbackText}>{feedback}</Text>
-        </View>
-    );
+    const epochToDate = (epochTime) =>{
+        const date = new Date(epochTime);
+        return date.toLocaleString();
+    }
 
-    const renderItem = ({ item }) => <Item feedback={item} />;
+    const formattedDate = epochToDate(session.createdAt);
+
+    // Formats Feedback
+    const formatFeedback = (feedback) => {
+        return feedback.split(/(Repetition #\d+:|Summary:)/g).map((part, index) => {
+            if (/Repetition #\d+:|Summary:/.test(part)) {
+                return <Text key={index} style={{ fontWeight: 'bold' }}>{part}</Text>;
+            }
+            return <Text key={index}>{part}</Text>;
+        });
+    };
 
     return (
         <SafeAreaView style={styles.container}>
@@ -38,16 +47,14 @@ const FeedbackScreen = ({ route, navigation }) => {
                 <Text style={styles.sectionTitle}>Session Details</Text>
                 <Text style={styles.sessionText}> Exercise: {session.exercise}</Text>
                 <Text style={styles.sessionText}> Duration: {session.duration} sec</Text>
-                <Text style={styles.sessionText}> Created At: {session.createdAt}</Text>
+                <Text style={styles.sessionText}> Created At: {formattedDate}</Text>
             </View>
 
-            {/* Feedback List */}
+            {/* Feedback */}
             <View style={styles.feedbackContainer}>
-                <FlatList
-                    data={session.feedback}
-                    renderItem={renderItem}
-                    keyExtractor={(item, index) => index.toString()}
-                />
+                <ScrollView style={styles.feedbackScroll}>
+                    <Text style={styles.feedbackText}>{formatFeedback(session.feedback)}</Text>
+                </ScrollView>
             </View>
         </SafeAreaView>
     );
@@ -95,30 +102,31 @@ const styles = StyleSheet.create({
         color: '#666',
         marginBottom: height * 0.005,
     },
+
     feedbackContainer: {
         width: width * 0.9,
-        maxHeight: height * 0.4,
         marginTop: height * 0.05,
-        padding: width * 0.03,
+        padding: width * 0.05,
         backgroundColor: '#FFF',
-        borderRadius: 10,
+        borderRadius: 15,
         shadowColor: '#000',
         shadowOffset: {
-            width: 5,
-            height: 6,
+            width: 3,
+            height: 4,
         },
-        shadowOpacity: 0.1,
+        shadowOpacity: 0.15,
+        shadowRadius: 6,
+        elevation: 5,
     },
-    item: {
-        backgroundColor: '#E4E4E4',
-        padding: 15,
-        marginVertical: 8,
-        borderRadius: 8,
+    feedbackScroll: {
+        maxHeight: height * 0.5,
+        paddingVertical: 10,
     },
     feedbackText: {
         fontSize: 16,
         color: '#333',
-        fontWeight: 'bold',
+        //fontWeight: 'bold',
+        lineHeight: 24,
     },
 });
 
