@@ -20,7 +20,11 @@ export const generatePrompt = (exercise, repFlags, modelFeedback) => {
     // Create start of prompt with instructions and warnings
     let prompt = `Generate feedback for the repetitions I completed when performing ${exercise}.\n`;
     prompt += "Be concise and clear. Do not repeat the same information and don't include markdown.\n";
-    prompt += "After including the feedback for each repetition, include a final small summary. ";
+    prompt += "For each repetition, write a sentence or more with feedback, no bullet points."
+    prompt += "After including the feedback for each repetition, include a final small summary.\n";
+    prompt += "For example, follow this format:\n";
+    prompt += "Repetition #i: <feedback>\n";
+    prompt += "Summary: <summary feedback>\n";
 
     // For every repetition
     for (let i = 0; i < repFlags.length; i++) {
@@ -33,7 +37,7 @@ export const generatePrompt = (exercise, repFlags, modelFeedback) => {
         // Append the flags to the prompt
         const flags = repFlags[i];
         if (flags.length === 0)
-            prompt += "- None";
+            prompt += "- None\n";
         for (const flag of flags) {
             prompt += `- ${flag}\n`;
         }

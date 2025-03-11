@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { FIREBASE_AUTH } from '../firebaseConfig';
 import { useAuthContext, resetScreens } from '../context/AuthContext';
 import { Camera, useCameraDevice, useCameraPermission, useSkiaFrameProcessor, VisionCameraProxy } from 'react-native-vision-camera';
@@ -11,6 +11,7 @@ import { useRunOnJS } from 'react-native-worklets-core';
 import { useSharedValue } from 'react-native-reanimated';
 import FontIcon from 'react-native-vector-icons/FontAwesome';
 import MaterialIcon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { createSessionObject, generatePrompt, requestAIFeedback, saveExerciseSession } from '../services/OpenAI';
 
 // Initialize custom Frame Processor Plugin for pose detection
 const plugin = VisionCameraProxy.initFrameProcessorPlugin('detectPose');
@@ -28,7 +29,7 @@ const CameraScreen = ({ route, navigation }) => {
     // Basic screen states and authentication
     const { exercise } = route.params;
     const { user, loadingUser } = useAuthContext();
-    const [loading, setLoading] = useState(false);
+    const [ isLoading, setIsLoading] = useState(false);
     const auth = FIREBASE_AUTH;
 
     // Camera utilization
@@ -37,7 +38,7 @@ const CameraScreen = ({ route, navigation }) => {
     const device = useCameraDevice(cameraDevice);
     const isFocused = useIsFocused();
     const appState = useAppState();
-    const isActive = isFocused && appState === "active";
+    const isActive = !isLoading && isFocused && appState === "active";
 
     // Flip camera function on press
     const flipCamera = () => {
@@ -133,6 +134,48 @@ const CameraScreen = ({ route, navigation }) => {
         }
     }, [showAngles, showLandmarks]);
 
+    const stopSession = async () => {
+        // Set isLoading to true to stop Frame Processor and display loading symbol
+        setIsLoading(true);
+
+        // TODO: Display loading icon here
+        // TODO: ...
+
+        try {
+            // Query OpenAI feedback
+            // TODO: Add fake data to feedback_seen for now;
+            let flags = flags_seen.value;
+            let modelFeedback = feedback_seen.value;
+            for (let i = 0; i < flags.length; i++) {
+                modelFeedback.push(["N/A", "N/A"]);
+            }
+            const prompt = generatePrompt(exercise, flags, modelFeedback);
+            const response = await requestAIFeedback(prompt);
+
+            // Create session object
+            const userId = user.uid;
+            const session = createSessionObject(exercise);
+            // TODO: Keep track of session duration
+            session.duration = -1;
+            session.feedback = response;
+            session.repetitions = repCount.value;
+
+            // Save session data to Firebase
+            saveExerciseSession(userId, session);
+
+            // Display feedback to the user
+            navigation.replace('Feedback', { session });
+        } catch (error) {
+            const errorCode = error.code;
+            const errorMessage = error.message;
+            console.log(`${errorCode} | ${errorMessage}`);
+            // Optionally, show an alert with the error
+            Alert.alert('Error', errorMessage);
+        } finally {
+            setIsLoading(false);
+        }
+    }
+
     return (
         <View style={styles.container}>
             {hasPermission ? (
@@ -171,6 +214,11 @@ const CameraScreen = ({ route, navigation }) => {
                             color="#fff"
                             onPress={() => setShowLandmarks(!showLandmarks)}
                         />
+                    </View>
+                    <View style={styles.stopButtonContainer}>
+                        <TouchableOpacity style={styles.stopButton} onPress={() => stopSession()}>
+                            <Text style={styles.stopButtonText}>Stop Session</Text>
+                        </TouchableOpacity>
                     </View>
                 </>
             ) : (
@@ -219,6 +267,23 @@ const styles = StyleSheet.create({
 		top: 200,
         right: 26,
 	},
+    stopButtonContainer: {
+        position: 'absolute',
+        bottom: 50,
+        alignSelf: 'center',
+    },
+    stopButton: {
+        backgroundColor: 'red',
+        paddingVertical: 12,
+        paddingHorizontal: 20,
+        borderRadius: 5,
+        elevation: 5,
+    },
+    stopButtonText: {
+        color: 'white',
+        fontSize: 18,
+        fontWeight: 'bold',
+    },
 });
 
 export default CameraScreen;
