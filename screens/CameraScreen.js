@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { FIREBASE_AUTH } from '../firebaseConfig';
 import { useAuthContext, resetScreens } from '../context/AuthContext';
@@ -30,7 +30,7 @@ const CameraScreen = ({ route, navigation }) => {
     const { exercise } = route.params;
     const { user, loadingUser } = useAuthContext();
     const [ isLoading, setIsLoading] = useState(false);
-    const startTime = Date.now();
+    const startTimeRef = useRef(null);
     const auth = FIREBASE_AUTH;
 
     // Camera utilization
@@ -89,6 +89,7 @@ const CameraScreen = ({ route, navigation }) => {
 
     // After rending, verify is user is signed in
     useEffect(() => {
+        startTimeRef.current = Date.now();
         resetScreens(user, loadingUser, navigation);
     }, [user, loadingUser, navigation]);
 
@@ -159,7 +160,7 @@ const CameraScreen = ({ route, navigation }) => {
             // Create session object
             const userId = user.uid;
             const session = createSessionObject(exercise);
-            session.duration = ((Date.now() - startTime) / 1000).toFixed(1);
+            session.duration = ((Date.now() - startTimeRef.current) / 1000).toFixed(1);
             session.feedback = response;
             session.repetitions = repCount.value;
 
