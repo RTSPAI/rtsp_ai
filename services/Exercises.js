@@ -1,7 +1,7 @@
 // TODO: Improve complexity of each exercise to take into account multiple angles.
 // TODO: At the same time, ensure that there is some leniency if some angles are not found.
 
-const FLAGS_THRESHOLD = 70;
+const FLAGS_THRESHOLD = 50;
 
 // Function to return flag messages that exceed the determined threshold
 export function getTriggeredFlags(flags_dict) {
