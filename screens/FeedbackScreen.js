@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, SafeAreaView, Dimensions } from 'react-native';
+import {View, Text, StyleSheet, SafeAreaView, Dimensions, TouchableOpacity, ScrollView,} from 'react-native';
 import { FIREBASE_AUTH } from '../firebaseConfig';
 import { useAuthContext, resetScreens } from '../context/AuthContext';
-
 
 const FeedbackScreen = ({ route, navigation }) => {
     const { session } = route.params;
     const { user, loadingUser } = useAuthContext();
-    const [loading, setLoading] = useState(false);
+    const [expandedSections, setExpandedSections] = useState({});
     const auth = FIREBASE_AUTH;
 
     useEffect(() => {
@@ -18,21 +17,34 @@ const FeedbackScreen = ({ route, navigation }) => {
         return null;
     }
 
-    const epochToDate = (epochTime) =>{
+    const epochToDate = (epochTime) => {
         const date = new Date(epochTime);
         return date.toLocaleString();
-    }
+    };
 
     const formattedDate = epochToDate(session.createdAt);
 
-    // Formats Feedback
-    const formatFeedback = (feedback) => {
-        return feedback.split(/(Repetition #\d+:|Summary:)/g).map((part, index) => {
-            if (/Repetition #\d+:|Summary:/.test(part)) {
-                return <Text key={index} style={{ fontWeight: 'bold' }}>{part}</Text>;
+    const parseFeedback = (rawFeedback) => {
+        const parts = rawFeedback.split(/(Repetition #\d+:|Summary:)/g).filter(Boolean);
+        const parsed = [];
+
+        for (let i = 0; i < parts.length; i++) {
+            if (/Repetition #\d+:|Summary:/.test(parts[i])) {
+                parsed.push({ title: parts[i].trim(), content: parts[i + 1]?.trim() || '' });
+                i++;
             }
-            return <Text key={index}>{part}</Text>;
-        });
+        }
+
+        return parsed;
+    };
+
+    const feedbackSections = parseFeedback(session.feedback);
+
+    const toggleSection = (index) => {
+        setExpandedSections((prev) => ({
+            ...prev,
+            [index]: !prev[index],
+        }));
     };
 
     return (
@@ -50,10 +62,27 @@ const FeedbackScreen = ({ route, navigation }) => {
                 <Text style={styles.sessionText}> Created At: {formattedDate}</Text>
             </View>
 
-            {/* Feedback */}
+            {/* Feedback Section */}
             <View style={styles.feedbackContainer}>
                 <ScrollView style={styles.feedbackScroll}>
-                    <Text style={styles.feedbackText}>{formatFeedback(session.feedback)}</Text>
+                    {feedbackSections.map((section, index) => (
+                        <View key={index} style={styles.accordionSection}>
+                            <TouchableOpacity
+                                onPress={() => toggleSection(index)}
+                                style={styles.accordionHeader}
+                            >
+                                <Text style={styles.accordionTitle}>{section.title}</Text>
+                                <Text style={styles.chevron}>
+                                    {expandedSections[index] ? '▲' : '▼'}
+                                </Text>
+                            </TouchableOpacity>
+                            {expandedSections[index] && (
+                                <View style={styles.accordionContent}>
+                                    <Text style={styles.feedbackText}>{section.content}</Text>
+                                </View>
+                            )}
+                        </View>
+                    ))}
                 </ScrollView>
             </View>
         </SafeAreaView>
@@ -67,7 +96,6 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#E4E4E4',
         alignItems: 'center',
-        justifyContent: 'flex-start',
         paddingTop: height * 0.05,
     },
     headerContainer: {
@@ -102,7 +130,6 @@ const styles = StyleSheet.create({
         color: '#666',
         marginBottom: height * 0.005,
     },
-
     feedbackContainer: {
         width: width * 0.9,
         marginTop: height * 0.05,
@@ -119,17 +146,43 @@ const styles = StyleSheet.create({
         elevation: 5,
     },
     feedbackScroll: {
-        maxHeight: height * 0.5,
+        maxHeight: height * 0.5, 
+    },
+    accordionSection: {
+        marginBottom: 10,
+        borderRadius: 10,
+        backgroundColor: '#f9f9f9',
+        overflow: 'hidden',
+        borderWidth: 1,
+        borderColor: '#ddd',
+    },
+    accordionHeader: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        paddingVertical: 12,
+        paddingHorizontal: 15,
+        backgroundColor: '#e0e0e0',
+    },
+    accordionTitle: {
+        fontSize: 16,
+        fontWeight: 'bold',
+        color: '#333',
+    },
+    chevron: {
+        fontSize: 18,
+        color: '#555',
+    },
+    accordionContent: {
+        paddingHorizontal: 15,
         paddingVertical: 10,
+        backgroundColor: '#fff',
     },
     feedbackText: {
         fontSize: 16,
         color: '#333',
-        //fontWeight: 'bold',
         lineHeight: 24,
     },
 });
 
 export default FeedbackScreen;
-
-
