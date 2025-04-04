@@ -11,6 +11,18 @@ export const createSessionObject = (exercise) => {
 }
 
 // Function to generate text prompt for OpenAI based on repetition flags and injury model feedback
+export const generateExercisePredictionPrompt = (angles_seen) => {
+    let prompt = `Given an array of key body joint angles for multiple frames, all sorted in order, classify the exercise as one of the following: "Push Ups", "Pull Ups", or "Squats".
+    
+    Output Format:
+    Return only a single string from the following choices: "Pull Ups", "Push Ups", or "Squats". Do not include explanations, additional text, or formatting—only the classification result. No markdown as well
+    
+    Here's the data:\n`;
+    prompt += JSON.stringify(angles_seen);
+    return prompt;
+}
+
+// Function to generate text prompt for OpenAI based on repetition flags and injury model feedback
 export const generatePrompt = (exercise, repFlags, modelFeedback) => {
     // Throw error if inconsistent data
     if (repFlags.length != modelFeedback.length) {
@@ -52,6 +64,19 @@ export const generatePrompt = (exercise, repFlags, modelFeedback) => {
 
 // Function to send an OpenAI request with the specified prompt and return the response
 export const requestAIFeedback = async (prompt) => {
+    const chatCompletion = httpsCallable(FIREBASE_FUNC, "chatCompletion");
+    try {
+        const data = { prompt };
+        const result = await chatCompletion(data);
+        return result.data.aiResponse;
+    } catch (error) {
+        console.log(error);
+        return error;
+    }
+}
+
+// Function to send an OpenAI request with the specified prompt and return the response
+export const requestExercisePrediction = async (prompt) => {
     const chatCompletion = httpsCallable(FIREBASE_FUNC, "chatCompletion");
     try {
         const data = { prompt };

@@ -10,6 +10,7 @@ import ProfileScreen from './screens/ProfileScreen';
 import FeedbackScreen from './screens/FeedbackScreen';
 import SettingsScreen from './screens/SettingsScreen';
 import TestGPT from './screens/TestGPT';
+import GptWarmupScreen from './screens/GptWarmupScreen';
 import { AuthProvider } from './context/AuthContext';
 
 const Stack = createNativeStackNavigator();
@@ -22,7 +23,7 @@ function RootStack() {
 			<Stack.Screen name="Signup" component={SignupScreen} options={{ headerShown: showAllHeaders }} />
 			<Stack.Screen name="Home" component={HomeScreen} options={{ headerShown: showAllHeaders }} />
 			<Stack.Screen name="Camera" component={CameraScreen} options={{ headerShown: showAllHeaders }} />
-			<Stack.Screen name="Warmup" component={WarmupScreen} options={{ headerShown: showAllHeaders }} />
+			<Stack.Screen name="Warmup" component={GptWarmupScreen} options={{ headerShown: showAllHeaders }} />
 			<Stack.Screen name="Profile" component={ProfileScreen} options={{ headerShown: showAllHeaders }} />
 			<Stack.Screen name="Feedback" component={FeedbackScreen} options={{ headerShown: showAllHeaders }} />
 			<Stack.Screen name="Settings" component={SettingsScreen} options={{ headerShown: showAllHeaders }} />
