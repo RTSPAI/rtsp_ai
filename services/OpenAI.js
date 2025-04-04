@@ -12,10 +12,15 @@ export const createSessionObject = (exercise) => {
 
 // Function to generate text prompt for OpenAI based on repetition flags and injury model feedback
 export const generateExercisePredictionPrompt = (angles_seen) => {
-    let prompt = `Given an array of key body joint angles for multiple frames, all sorted in order, classify the exercise as one of the following: "Push Ups", "Pull Ups", or "Squats".
-    
+    let prompt = `Given an array of key body joint angles for multiple frames, all sorted in order, classify the exercise as one of the following: "Push Ups" or "Squats".
+
+    Key Identification Criterias:
+    - Squats: if the LeftKnee or RightKnee angles passes less than 110 degress one or more times, it's most likely "Squats"
+    - Push Ups: if the elbow angles passes below 90 degress one or more times, it's most likely "Push Ups"
+    Whichever seems to be the most frequent exercise, classify it as such.
+
     Output Format:
-    Return only a single string from the following choices: "Pull Ups", "Push Ups", or "Squats". Do not include explanations, additional text, or formatting—only the classification result. No markdown as well
+    Return only a single string from the following choices: "Push Ups", or "Squats". Do not include explanations, additional text, or formatting—only the classification result. No markdown as well
     
     Here's the data:\n`;
     prompt += JSON.stringify(angles_seen);

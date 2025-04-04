@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity, Alert, ActivityIndicator } fr
 import { FIREBASE_AUTH } from '../firebaseConfig';
 import { useAuthContext, resetScreens } from '../context/AuthContext';
 import { Camera, useCameraDevice, useCameraPermission, useFrameProcessor } from 'react-native-vision-camera';
-import { computeAngles, computeLandmarks } from '../services/PoseDetection';
+import { computeAngles, computeLandmarks, computeMinimumLandmarks } from '../services/PoseDetection';
 import { useIsFocused } from '@react-navigation/native';
 import { useAppState } from '@react-native-community/hooks';
 import FontIcon from 'react-native-vector-icons/FontAwesome';
@@ -45,7 +45,9 @@ const GptWarmupScreen = ({ navigation }) => {
     // States for exercise prediction
     const [timeLeft, setTimeLeft] = useState(8);
     const angles_seen = useSharedValue([]);
-
+    const pushup_counter = useSharedValue(0);
+    const squats_counter = useSharedValue(0);
+    
     const stopSession = async () => {
         
         // Set isLoading to true to stop Frame Processor and display loading symbol
@@ -53,8 +55,19 @@ const GptWarmupScreen = ({ navigation }) => {
         
         // Compute the most likely exercise the user is performing
         // TODO: Define this function
-        const prompt = generateExercisePredictionPrompt(angles_seen.value);
-        const exercise = await requestExercisePrediction(prompt);
+        // const prompt = generateExercisePredictionPrompt(angles_seen.value);
+
+        // console.log(prompt);
+        // const exercise = await requestExercisePrediction(prompt);
+
+        let exercise = "Squats";
+        if (pushup_counter.value > squats_counter.value) {
+            exercise = "Push Ups";
+        }
+
+        console.log("Push Up Counter", pushup_counter.value);
+        console.log("Squats Counter", squats_counter.value);
+
 
         // Pop up to confirm model prediction
         Alert.alert(
@@ -111,6 +124,13 @@ const GptWarmupScreen = ({ navigation }) => {
         // Compute data dictionaries
         let landmarks_dict = computeLandmarks(data);
         let angles_dict = computeAngles(landmarks_dict);
+
+        if (angles_dict["LeftElbow"] < 90) {
+            pushup_counter.value = pushup_counter.value + 1;
+        }
+        if (angles_dict["LeftKnee"] < 110) {
+            squats_counter.value = squats_counter.value + 1;
+        }
 
         // Store angle data for feedback later
         angles_seen.value = [...angles_seen.value, angles_dict]
