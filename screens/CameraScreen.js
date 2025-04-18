@@ -145,7 +145,7 @@ const CameraScreen = ({ route, navigation }) => {
 
         try {
             // Query OpenAI feedback
-            // TODO: Add fake data to feedback_seen for now;
+            //* Add fake data to feedback_seen for now (until Injury Prevention model is implemented)
             let flags = flags_seen.value;
             let modelFeedback = feedback_seen.value;
             for (let i = 0; i < flags.length; i++) {
