@@ -54,20 +54,10 @@ const GptWarmupScreen = ({ navigation }) => {
         setIsLoading(true);
         
         // Compute the most likely exercise the user is performing
-        // TODO: Define this function
-        // const prompt = generateExercisePredictionPrompt(angles_seen.value);
-
-        // console.log(prompt);
-        // const exercise = await requestExercisePrediction(prompt);
-
         let exercise = "Squats";
         if (pushup_counter.value > squats_counter.value) {
             exercise = "Push Ups";
         }
-
-        console.log("Push Up Counter", pushup_counter.value);
-        console.log("Squats Counter", squats_counter.value);
-
 
         // Pop up to confirm model prediction
         Alert.alert(
