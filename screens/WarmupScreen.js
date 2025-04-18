@@ -125,12 +125,6 @@ const WarmupScreen = ({ navigation }) => {
         // 5. Update the dictionary data and JS thread
         predictions_dict.value[exercise] += 1;
         updateSharedValues(predictions_dict.value);
-
-        //! DEBUG: Delete later
-        // console.log("Raw Output:", valuesList);
-        // console.log(`Model Prediction: ${exercise} |         Timestamp: ${Date.now()}`);
-        // console.log("Predictions:", predictions_dict.value);
-        // console.log('----------------------------------------------------------------------------')
     }, [model]);
 
     return (
