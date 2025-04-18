@@ -28,7 +28,6 @@ export function calculateAngle(a, b, c) {
 }
 
 // Function to compute primary angles (exercises include: pushups, pullups, squats)
-// TODO: Investigate camera inverting with front-camera
 export function computeAngles(landmarks) {
 	'worklet';
 	if (landmarks.length == 0) return {};
