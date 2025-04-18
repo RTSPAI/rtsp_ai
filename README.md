@@ -10,7 +10,7 @@ By Max Bagatini Alves, Gabriela L. P. Barbosa, Caleb Freckmann, Matthew Pryce, L
 4. If utilizing Development Build in iOS, open the Xcode Workspace file, open the Signing & Capabilities tab, and change the team to your Apple account.
       - in ios folder, run `open rtsp.xcworkspace`
       - that will open xcode, where you need to change the team to a personal account, and change the bundle identifier
-6. To run (on iOS) `npx expo run:ios --device` and select your device. If running/compiling through Xcode, make sure to run `npx expo start` through the terminal as well to ensure that the Metro server is running.
+6. To run (on iOS) `npx expo run:ios --device` and select your device. If running/compiling through Xcode, make sure to run `npx expo start` through the terminal as well to ensure that the Metro server is running. \
 **_Note:_** If the app installs but does not download/bundle (or crashes before opening), attempt to connect your device to your phone through a hotspot and try again (This issue happens in the UCF wifi, for example).
 
 ## Future Improvements & Roadblocks
