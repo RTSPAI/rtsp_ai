@@ -1,6 +1,4 @@
-// TODO: Improve complexity of each exercise to take into account multiple angles.
-// TODO: At the same time, ensure that there is some leniency if some angles are not found.
-
+// Define threshold for flags to be counted as active
 const FLAGS_THRESHOLD = 50;
 
 // Function to return flag messages that exceed the determined threshold
