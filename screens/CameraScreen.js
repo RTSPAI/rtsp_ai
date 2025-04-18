@@ -79,9 +79,6 @@ const CameraScreen = ({ route, navigation }) => {
         // Update in the background
         flags_seen.value = all_flags;
 
-        // TODO: Run Gabby's model here and store feedback in `feedback_seen`
-        // TODO: ...
-
         // Reset Shared Values
         angles.value = [];
         flags.value = {};
